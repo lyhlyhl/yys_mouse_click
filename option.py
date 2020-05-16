@@ -5,8 +5,8 @@ import time
 import threading
 import random
 
-x=win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
-y=win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+a=win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+b=win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
 
 
 class BasicOption:
@@ -22,32 +22,34 @@ class BasicOption:
     def get_position(self):
          return win32api.GetCursorPos()
 
-class Option:
+class Option():
     def __init__(self,BasicOption):
-        self.BO =BasicOption
-
+        self.BasicOption = BasicOption
     def yuling_single(self):
         time.sleep(1)
-        self.BO.mouse_click(860,random.randint(458,478))
+        self.BasicOption.mouse_click(860,random.randint(458,478))
         time.sleep(70)
-        self.BO.mouse_click(550,random.randint(479,500))
+        self.BasicOption.mouse_click(550,random.randint(479,500))
         time.sleep(1)
-        self.BO.mouse_click(550, random.randint(479,500))
+        self.BasicOption.mouse_click(550, random.randint(479,500))
         time.sleep(1)
-        self.BO.mouse_click(550, random.randint(479,500))
+        self.BasicOption.mouse_click(550, random.randint(479,500))
         time.sleep(1)
     def yuling_trouble(self):
         time.sleep(5)
         while 1:
             time.sleep(1)
-            self.BO.mouse_click(855,random.randint(984,1000))
+            self.BasicOption.mouse_click(855,random.randint(984,1000))
             time.sleep(80)
-            self.BO.mouse_click(random.randint(527,653),999)
+            self.BasicOption.mouse_click(random.randint(527,653),999)
             time.sleep(1)
-            self.BO.mouse_click(random.randint(527,653),999)
+            self.BasicOption.mouse_click(random.randint(527,653),999)
             time.sleep(1)
-            self.BO.mouse_click(random.randint(527,653),999)
+            self.BasicOption.mouse_click(random.randint(527,653),999)
             time.sleep(1)
+Bo=BasicOption()
+o = Option(Bo)
+o.yuling_trouble()
 
 '''
 def yuling3():
@@ -135,12 +137,12 @@ if __name__ == '__main__':
 '''
 
 
-BO = BasicOption
+#BO = BasicOption
+#BO.mouse_click(855,random.randint(984,1000))
 
 
 
-
-
+'''
 
 class GetWindows():
     def __init__(self):
@@ -158,7 +160,7 @@ class GetWindows():
 #    wind.mouseMoveEvent()
 
 
-
+'''
 
 
 
