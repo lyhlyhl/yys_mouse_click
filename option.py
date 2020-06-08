@@ -8,50 +8,84 @@ import random
 a=win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
 b=win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
 
+def MouseMove(x,y):     #移动鼠标的位置
+    win32api.SetCursorPos((x, y))
+def MouseClick(x=None,y=None):  #鼠标点击指定的地方
+    if not x is None and not y is None:
+        MouseMove(x,y)
+        time.sleep(0.005)
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
+    time.sleep(random.uniform(0.001, 0.02))
+    win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
+def GetMousePosition():     #得到鼠标的位置
+     return win32api.GetCursorPos()
 
-class BasicOption:
-    def mouse_move(self,x,y):
-        win32api.SetCursorPos((x, y))
-    def mouse_click(self,x=None,y=None):
-        if not x is None and not y is None:
-            self.mouse_move(x,y)
-            time.sleep(0.005)
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
-        time.sleep(random.uniform(0.1, 0.2))
-        win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-    def get_position(self):
-         return win32api.GetCursorPos()
+class MyWindows:    #新建一个窗口类
+    def __init__(self):
+        self.left = None
+        self.top = None
+        self.right = None
+        self.bottom = None
+        self.hwnd = None
+    def GetWindowsHwnd(self):   #得到鼠标对应位置的应用句柄
+        X,Y=GetMousePosition()
+        hwnd = win32gui.WindowFromPoint((X, Y))
+        self.hwnd = hwnd
+        return hwnd
+    def GetWindowsPostion(self):    #可以直接得到鼠标对应窗口的位置
+        return win32gui.GetWindowRect(self.GetWindowsHwnd())
+    def GetWindowsRect(self):
+        self.left, self.top, self.right, self.bottom = self.GetWindowsPostion()
+    def ChangeWindows(self,left,top,width,hight):   #改变窗口的位置
+        win32gui.MoveWindow(self.hwnd, left, top, width, hight, True)
 
-class Option():
-    def __init__(self,BasicOption):
-        self.BasicOption = BasicOption
-    def yuling_single(self):
-        time.sleep(1)
-        self.BasicOption.mouse_click(860,random.randint(458,478))
-        time.sleep(70)
-        self.BasicOption.mouse_click(550,random.randint(479,500))
-        time.sleep(1)
-        self.BasicOption.mouse_click(550, random.randint(479,500))
-        time.sleep(1)
-        self.BasicOption.mouse_click(550, random.randint(479,500))
-        time.sleep(1)
-    def yuling_trouble(self):
-        time.sleep(5)
-        while 1:
-            time.sleep(1)
-            self.BasicOption.mouse_click(855,random.randint(984,1000))
-            time.sleep(80)
-            self.BasicOption.mouse_click(random.randint(527,653),999)
-            time.sleep(1)
-            self.BasicOption.mouse_click(random.randint(527,653),999)
-            time.sleep(1)
-            self.BasicOption.mouse_click(random.randint(527,653),999)
-            time.sleep(1)
-Bo=BasicOption()
-o = Option(Bo)
-o.yuling_trouble()
+
+wd= MyWindows()
+while(1):
+    #if():
+    if (win32api.GetAsyncKeyState(0x20)&0x8000 != 0) :
+        print(wd.GetWindowsHwnd())
+        wd.ChangeWindows(20,20,500,500)
+        print(wd.left)
+        print(wd.top)
+        while(1):
+           if win32api.GetAsyncKeyState(0x20) == 0 :
+               break
+
+    #print((win32api.GetAsyncKeyState(0x41)&0x8000))
+    '''
+    print(wd.GetWindowsHwnd())
+    win32gui.SetForegroundWindow(wd.GetWindowsHwnd());
+    print(wd.GetWindowsPostion())
+    wd.DrawWindowsRect()
+    time.sleep(0.5)
+    '''
 
 '''
+def yuling_single():
+    time.sleep(1)
+    mouse_click(860,random.randint(458,478))
+    time.sleep(70)
+    mouse_click(550,random.randint(479,500))
+    time.sleep(1)
+    mouse_click(550, random.randint(479,500))
+    time.sleep(1)
+    mouse_click(550, random.randint(479,500))
+    time.sleep(1)
+def yuling_trouble():
+    time.sleep(5)
+    while 1:
+        time.sleep(1)
+        mouse_click(855,random.randint(984,1000))
+        time.sleep(80)
+        mouse_click(random.randint(527,653),999)
+        time.sleep(1)
+        mouse_click(random.randint(527,653),999)
+        time.sleep(1)
+        mouse_click(random.randint(527,653),999)
+        time.sleep(1)
+
+
 def yuling3():
     time.sleep(45)
     while 1:
