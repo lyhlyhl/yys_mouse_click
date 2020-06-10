@@ -22,39 +22,39 @@ def GetMousePosition():     #得到鼠标的位置
 
 class MyWindows:    #新建一个窗口类
     def __init__(self):
-        self.left = None
+        self.left = None    #窗口的位置
         self.top = None
         self.right = None
         self.bottom = None
         self.hwnd = None
-        self.random_x_fight = random.uniform(0.92,0.97)
+        self.random_x_fight = random.uniform(0.92, 0.97)    #点击挑战的时候的位置坐标 坐标为组队的时候
         self.random_y_fight = random.uniform(0.84, 0.92)
+        self.random_x_other = random.uniform(0.7, 0.74)
+        self.random_y_other = random.uniform(0.67, 0.69)
+        self.random_x_YuLing = random.uniform(0.84, 0.88)
+        self.random_y_YuLing = random.uniform(0.86, 0.88)
     def GetWindowsHwnd(self):   #得到鼠标对应位置的应用句柄
         X,Y=GetMousePosition()
         hwnd = win32gui.WindowFromPoint((X, Y))
         self.hwnd = hwnd
         return hwnd
-    def GetWindowsPostion(self):    #可以直接得到鼠标对应窗口的位置
-        return win32gui.GetWindowRect(self.GetWindowsHwnd())
-    def GetWindowsRect(self):
-        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.hwnd)
+    def GetWindowsRect(self):   #更新窗口位置的大小并返回出
+        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.GetWindowsHwnd())
+        return win32gui.GetWindowRect(self.hwnd)
     def ChangeWindows(self,left,top,width,hight):   #改变窗口的位置
-        win32gui.MoveWindow(self.hwnd, left, top, width, hight, True)
+        if (win32api.GetAsyncKeyState(0x20) & 0x8000 != 0):     #如果空格键按下的时候
+            self.GetWindowsHwnd()     #先初始化得到鼠标所在位置句柄
+            win32gui.MoveWindow(self.hwnd, left, top, width, hight, True)   #改变应用的位置和大小
+            while (1):
+                if win32api.GetAsyncKeyState(0x20) == 0:
+                    self.GetWindowsRect()
+                    break
     def WindowsMoveClick(self, random_x,random_y):
-        MouseClick(int((self.right-self.left)*random_x)+20,int((self.bottom-self.top)*random_y)+20)
-
-wd= MyWindows()
-while(1):
-    #if():
-    if (win32api.GetAsyncKeyState(0x20)&0x8000 != 0) :
-        print(wd.GetWindowsHwnd())
-        wd.ChangeWindows(20,20,500,500)
-        wd.GetWindowsRect()
-        print(int((wd.right-wd.left)*wd.random_x_fight))
-        while(1):
-           if win32api.GetAsyncKeyState(0x20) == 0 :
-               wd.WindowsMoveClick(wd.random_x_fight, wd.random_y_fight)
-               break
+        MouseClick(int((self.right-self.left)*random_x)+self.left,int((self.bottom-self.top)*random_y)+self.top)
+    def WindowsClickFight(self):
+        self.WindowsMoveClick(self.random_x_fight,self.random_y_fight)
+    def WindowsClickOther(self):
+        self.WindowsMoveClick(self.random_x_other,self.random_y_other)
 
     #print((win32api.GetAsyncKeyState(0x41)&0x8000))
     '''
