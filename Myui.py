@@ -1,37 +1,45 @@
+import qtui
+import sys
 
-import tkinter as tk
-import tkinter.messagebox
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-class MyUiWindow:
-    def __init__(self,window):
-        self.window = window
-    def InitWindow(self):
-        self.window.title('痒痒鼠脚本')
-        self.window.geometry('400x300')
-        self.window.iconbitmap("bitbug_favicon.ico")
-        menubar = tk.Menu(self.window)
-        filemenu = tk.Menu(menubar, tearoff=0)
-        filemenu1 = tk.Menu(menubar, tearoff=0)
-        filemenu2 = tk.Menu(menubar, tearoff=0)
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout,QMainWindow,QVBoxLayout
+
+class Ui_start(qtui.Ui_MainWindow):
+    def __init__(self,Mainwindow):
+        super().setupUi(Mainwindow)
+       # self.Mainwindow = Mainwindow
+        #self.action_2.clicked.connect(self.action2_solt)
+        MainWindow.setWindowIcon(QIcon('myico.ico'))
+        self.label1 = QLabel(Mainwindow)  # 2
+        self.TextBrowser1 = QTextBrowser(Mainwindow)
+        self.label1.setText("<h2>使用说明</h2>")
+        self.TextBrowser1.setStyleSheet("QTextBrowser{border-width:0;border-style:outset}")
+        self.TextBrowser1.setText("1.在类别中选择自己想要打的副本\n"
+                                  "2.点击")
+
+        self.action_2.triggered.connect(self.action2_solt)
+        self.layout_init(Mainwindow)
+    def layout_init(self,Mainwindow):
+        self.widget = QWidget()
+        self.v_layout = QVBoxLayout()
+        self.v_layout.addWidget(self.label1)
+        self.v_layout.addWidget(self.TextBrowser1)
+        self.widget.setLayout(self.v_layout)
+        Mainwindow.setCentralWidget(self.widget)
+
+    def action2_solt(self,Mainwindow):
+        self.widget.setParent(None)
 
 
-        menubar.add_cascade(label='模式', menu=filemenu)
-        menubar.add_cascade(label='说明', menu=filemenu1)
-        menubar.add_cascade(label='关于', menu=filemenu2)
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    MainWindow = QMainWindow()
+    ui=Ui_start(MainWindow)
 
-        submenu = tk.Menu(filemenu)
-
-        filemenu.add_cascade(label='御魂', menu=submenu)
-        submenu.add_command(label='单人', command=self.hit_me)
-        submenu.add_command(label='双人', command=self.hit_me)
-        submenu.add_command(label='三人', command=self.hit_me)
-
-        filemenu.add_command(label='御灵', command=self.hit_me)
-        filemenu.add_command(label='贪痴念', command=self.hit_me)
+    MainWindow.show()
+    sys.exit(app.exec_())
 
 
-        self.window.config(menu=menubar)
-       # window.maxsize(width=200, height=300)
-    # window.minsize(width=200, height=300
-    def hit_me(self):
-        tkinter.messagebox.showinfo(title='警告', message='test')
+#class father():
