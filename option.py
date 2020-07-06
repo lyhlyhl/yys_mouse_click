@@ -19,31 +19,30 @@ def MouseClick(x=None,y=None):  #鼠标点击指定的地方
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
 def GetMousePosition():     #得到鼠标的位置
      return win32api.GetCursorPos()
+def GetWindowHwnd():
+    X, Y = GetMousePosition()
+    hwnd_value = win32gui.WindowFromPoint((X, Y))
+    return str(hwnd_value)
 
 class MyWindows:    #新建一个窗口类
-    def __init__(self):
+    def __init__(self,hwnd):
         self.left = None    #窗口的位置
         self.top = None
         self.right = None
         self.bottom = None
-        self.hwnd = None
+        self.hwnd = hwnd
         self.random_x_fight = random.uniform(0.92, 0.97)    #点击挑战的时候的位置坐标 坐标为组队的时候
         self.random_y_fight = random.uniform(0.84, 0.92)
         self.random_x_other = random.uniform(0.7, 0.74)
         self.random_y_other = random.uniform(0.67, 0.69)
         self.random_x_YuLing = random.uniform(0.84, 0.88)
         self.random_y_YuLing = random.uniform(0.86, 0.88)
-    def GetWindowsHwnd(self):   #得到鼠标对应位置的应用句柄
-        X,Y=GetMousePosition()
-        hwnd = win32gui.WindowFromPoint((X, Y))
-        self.hwnd = hwnd
-        return hwnd
+
     def GetWindowsRect(self):   #更新窗口位置的大小并返回出
-        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.GetWindowsHwnd())
+        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.hwnd)
         return win32gui.GetWindowRect(self.hwnd)
     def ChangeWindows(self,left,top,width,hight):   #改变窗口的位置
         if (win32api.GetAsyncKeyState(0x20) & 0x8000 != 0):     #如果空格键按下的时候
-            self.GetWindowsHwnd()     #先初始化得到鼠标所在位置句柄
             win32gui.MoveWindow(self.hwnd, left, top, width, hight, True)   #改变应用的位置和大小
             while (1):
                 if win32api.GetAsyncKeyState(0x20) == 0:
