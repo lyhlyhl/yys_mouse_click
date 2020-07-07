@@ -6,7 +6,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import threading
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout,QMainWindow,QVBoxLayout,QLineEdit,QFormLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout,QMainWindow,QVBoxLayout,QLineEdit,QFormLayout,QPushButton
 
 class Ui_start(qtui.Ui_MainWindow): #定义一个ui类继承Qt Designer生成的类
     def __init__(self,Mainwindow):
@@ -40,25 +40,63 @@ class Ui_start(qtui.Ui_MainWindow): #定义一个ui类继承Qt Designer生成的
 
         # = option.GetMousePosition()
         label4 = QLabel("暂无数据",Mainwindow)
+        label5 = QLabel("进程标题： ",Mainwindow)
+        label6 = QLabel("暂无数据", Mainwindow)
+
+        t = threading.Thread(target=lambda: thead_SetHwndLabel(label4, label6))
+        t.start()
+        label7 = QLabel("每轮时间", Mainwindow)
+
         line1 = QLineEdit(Mainwindow)
         line1.setMaximumWidth(100)
         line2 = QLineEdit(Mainwindow)
         line2.setMaximumWidth(100)
+        line3 = QLineEdit(Mainwindow)
+        line3.setMaximumWidth(100)
+
+        confirm_button = QPushButton('开始', Mainwindow)
+        confirm_button.clicked.connect(lambda :self.action3_confirm(line1,line2,line3))
+        cancel_button = QPushButton('停止', Mainwindow)
 
         f_layout = QFormLayout()  # 1
         s_layout = QHBoxLayout()
+        ss_layout = QHBoxLayout()
+        button_layout = QHBoxLayout()
         all_v_layout = QVBoxLayout()
 
         s_layout.addWidget(label3)
         s_layout.addWidget(label4)
+        ss_layout.addWidget(label5)
+        ss_layout.addWidget(label6)
         f_layout.addRow(label1,line1)
         f_layout.addRow(label2, line2)
+        f_layout.addRow(label7,line3)
+        button_layout.addWidget(confirm_button)
+        button_layout.addWidget(cancel_button)
         all_v_layout.addLayout(s_layout)
+        all_v_layout.addLayout(ss_layout)
         all_v_layout.addLayout(f_layout)
+        all_v_layout.addLayout(button_layout)
         widget = QWidget()
         widget.setLayout(all_v_layout)
         Mainwindow.setCentralWidget(widget)
 
+
+    def action3_confirm(self,line1,line2,line3):
+        hwnd1 = line1.text()
+        hwnd2 = line2.text()
+        Turntime = line3.text()
+        if hwnd1 != None and hwnd2 !=None and Turntime != None:
+            windows1=option.MyWindows(int(hwnd1))
+            windows2=option.MyWindows(int(hwnd2))
+            windows1.ChangeWindows(10,10,300,300)
+        else:
+            
+def thead_SetHwndLabel(label1,label2):
+    while 1:
+        hwnd = option.GetWindowHwnd()
+        label1.setText(str(hwnd))
+        label2.setText(str(win32gui.GetWindowText(hwnd)))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
@@ -68,5 +106,3 @@ if __name__ == '__main__':
     MainWindow.show()
     sys.exit(app.exec_())
 
-
-#class father():

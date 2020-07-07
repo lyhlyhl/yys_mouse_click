@@ -22,22 +22,18 @@ def GetMousePosition():     #得到鼠标的位置
 def GetWindowHwnd():
     X, Y = GetMousePosition()
     hwnd_value = win32gui.WindowFromPoint((X, Y))
-    return str(hwnd_value)
+    return hwnd_value
 
 class MyWindows:    #新建一个窗口类
     def __init__(self,hwnd):
-        self.left = None    #窗口的位置
-        self.top = None
-        self.right = None
-        self.bottom = None
         self.hwnd = hwnd
+        self.GetWindowsRect()
         self.random_x_fight = random.uniform(0.92, 0.97)    #点击挑战的时候的位置坐标 坐标为组队的时候
         self.random_y_fight = random.uniform(0.84, 0.92)
         self.random_x_other = random.uniform(0.7, 0.74)
         self.random_y_other = random.uniform(0.67, 0.69)
         self.random_x_YuLing = random.uniform(0.84, 0.88)
         self.random_y_YuLing = random.uniform(0.86, 0.88)
-
     def GetWindowsRect(self):   #更新窗口位置的大小并返回出
         self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.hwnd)
         return win32gui.GetWindowRect(self.hwnd)
