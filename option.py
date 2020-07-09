@@ -23,11 +23,11 @@ def GetWindowHwnd():
     X, Y = GetMousePosition()
     hwnd_value = win32gui.WindowFromPoint((X, Y))
     return hwnd_value
-
+def WaitTime():
+    time.sleep(random.uniform(0.1, 0.5))
 class MyWindows:    #新建一个窗口类
     def __init__(self,hwnd):
         self.hwnd = hwnd
-        self.GetWindowsRect()
         self.random_x_fight = random.uniform(0.92, 0.97)    #点击挑战的时候的位置坐标 坐标为组队的时候
         self.random_y_fight = random.uniform(0.84, 0.92)
         self.random_x_other = random.uniform(0.7, 0.74)
@@ -36,14 +36,17 @@ class MyWindows:    #新建一个窗口类
         self.random_y_YuLing = random.uniform(0.86, 0.88)
     def GetWindowsRect(self):   #更新窗口位置的大小并返回出
         self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.hwnd)
-        return win32gui.GetWindowRect(self.hwnd)
+
+       #return win32gui.GetWindowRect(self.hwnd)
     def ChangeWindows(self,left,top,width,hight):   #改变窗口的位置
-        if (win32api.GetAsyncKeyState(0x20) & 0x8000 != 0):     #如果空格键按下的时候
+        hwnd_return=win32gui.GetWindowText(self.hwnd)
+        if hwnd_return == "阴阳师-网易游戏":
             win32gui.MoveWindow(self.hwnd, left, top, width, hight, True)   #改变应用的位置和大小
-            while (1):
-                if win32api.GetAsyncKeyState(0x20) == 0:
-                    self.GetWindowsRect()
-                    break
+            self.GetWindowsRect()
+        else:
+            return 1
+        return 0
+        #return 0
     def WindowsMoveClick(self, random_x,random_y):
         MouseClick(int((self.right-self.left)*random_x)+self.left,int((self.bottom-self.top)*random_y)+self.top)
     def WindowsClickFight(self):

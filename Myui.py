@@ -86,19 +86,22 @@ class Ui_start(qtui.Ui_MainWindow): #定义一个ui类继承Qt Designer生成的
         hwnd1 = line1.text()
         hwnd2 = line2.text()
         Turntime = line3.text()
-        print(hwnd1)
-        print(hwnd2)
-        print(Turntime)
-        print(1)
-        if hwnd1 != "" and hwnd2 !="" and Turntime != "":
+        if hwnd1 != "" and hwnd2 !="" and Turntime != "":   #判断是不是都是空的 只有不为空才能往下
             windows1=option.MyWindows(int(hwnd1))
             windows2=option.MyWindows(int(hwnd2))
-            windows1.ChangeWindows(10,10,300,300)
+
+            if windows1.ChangeWindows(10, 10, 500, 500) == 1:
+                QMessageBox.information(self.Mainwindow, '提示', '输入句柄1有误')
+            if windows2.ChangeWindows(10, 520, 500, 500) == 1:
+                QMessageBox.information(self.Mainwindow, '提示', '输入句柄2有误')
         else:
             QMessageBox.information(self.Mainwindow,'提示','请勿输入空内容')
+        windows1.WindowsClickOther()
+        windows2.WindowsClickOther()
+
 
             
-def thead_SetHwndLabel(label1,label2):
+def thead_SetHwndLabel(label1,label2):  #线程函数
     while 1:
         hwnd = option.GetWindowHwnd()
         label1.setText(str(hwnd))
