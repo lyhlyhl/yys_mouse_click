@@ -23,8 +23,14 @@ def GetWindowHwnd():
     X, Y = GetMousePosition()
     hwnd_value = win32gui.WindowFromPoint((X, Y))
     return hwnd_value
-def WaitTime():
-    time.sleep(random.uniform(0.1, 0.5))
+def WaitTime(x):
+    time.sleep(random.uniform(0.1, 0.5)*x)
+
+def WaitTime_short(x):
+    time.sleep(random.uniform(0.01, 0.05)*x)
+
+def WaitTime_wait(x):
+    time.sleep(x)
 class MyWindows:    #新建一个窗口类
     def __init__(self,hwnd):
         self.hwnd = hwnd
@@ -54,6 +60,26 @@ class MyWindows:    #新建一个窗口类
     def WindowsClickOther(self):
         self.WindowsMoveClick(self.random_x_other,self.random_y_other)
 
+def turn_two(class1,class2):
+    class1.WindowsClickOther()
+    WaitTime(2)
+    class2.WindowsClickOther()
+    WaitTime(2)
+
+def snake_two(class1,class2,num,time):
+    if num == "1":
+        class1.WindowsClickFight()
+    elif num == "2":
+        class2.WindowsClickFight()
+    turn_two(class1,class2)
+    WaitTime_short(1)
+    turn_two(class1, class2)
+    WaitTime_short(1)
+    turn_two(class1, class2)
+    WaitTime_short(1)
+    turn_two(class1, class2)
+    WaitTime_short(1)
+    WaitTime_wait(time)
     #print((win32api.GetAsyncKeyState(0x41)&0x8000))
     '''
     print(wd.GetWindowsHwnd())
