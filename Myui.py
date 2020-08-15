@@ -60,8 +60,8 @@ class Ui_start(qtui.Ui_MainWindow): #定义一个ui类继承Qt Designer生成的
 
         confirm_button = QPushButton('开始', self.Mainwindow)
         confirm_button.clicked.connect(lambda :self.action3_confirm(line1,line2,line3,line4))
-        cancel_button = QPushButton('停止', self.Mainwindow)
-        confirm_button.clicked.connect(lambda: self.action3_cancel(line1, line2, line3, line4))
+        self.cancel_button = QPushButton('停止', self.Mainwindow)
+        cancel_button =  self.cancel_button
 
         f_layout = QFormLayout()  # 1
         s_layout = QHBoxLayout()
@@ -103,15 +103,20 @@ class Ui_start(qtui.Ui_MainWindow): #定义一个ui类继承Qt Designer生成的
             if windows2.ChangeWindows(10, 520, 500, 500) == 1:
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄2有误')
                 return
-            if num != "1" or num != "2":
+            if num != "1" and num != "2":
                 QMessageBox.information(self.Mainwindow, '提示', '请输入数字1或2')
+                return
 
-            self.clicktread = threading.Thread(target=lambda: thead_MouseClick(windows1, windows2, num, Turntime))
+            self.clicktread = threading.Thread(target=lambda: thead_MouseClick(windows1, windows2, num, Turntime,2))
             self.clicktread.start()
+            self.cancel_button.clicked.connect(self.action3_cancel)
 
         else:
-            QMessageBox.information(self.Mainwindow,'提示','请勿输入空内容')
-            return
+            QMessageBox.information(self.Mainwindow, '提示', '请勿输入为空')
+    def action3_cancel(self):
+        option.stop_thread(self.clicktread)
+        self.cancel_button.clicked.disconnect(self.action3_cancel)
+        QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
 
             
 def thead_SetHwndLabel(label1,label2):  #线程函数
@@ -120,10 +125,13 @@ def thead_SetHwndLabel(label1,label2):  #线程函数
         label1.setText(str(hwnd))
         label2.setText(str(win32gui.GetWindowText(hwnd)))
 
-def thead_MouseClick(window1,window2,num,time):
-    option.turn_two(window1, window2)
-    while (1):
-        option.snake_two(window1, window2, num, time)
+def thead_MouseClick(window1,window2,num,time,flag):
+    if flag == 2:
+        print(1)
+        option.turn_two(window1, window2)
+        while (1):
+            option.snake_two(window1, window2, num, time)
+            print(1)
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     MainWindow = QMainWindow()

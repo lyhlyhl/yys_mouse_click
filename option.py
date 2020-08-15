@@ -4,6 +4,9 @@ import win32gui
 import time
 import threading
 import random
+import inspect
+import ctypes
+
 
 a=win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
 b=win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
@@ -30,7 +33,11 @@ def WaitTime_short(x):
     time.sleep(random.uniform(0.01, 0.05)*x)
 
 def WaitTime_wait(x):
-    time.sleep(x)
+    #if type(x) != "str"
+    if isinstance(x, int):
+        time.sleep(x)
+    else:
+        time.sleep(int(x))
 class MyWindows:    #新建一个窗口类
     def __init__(self,hwnd):
         self.hwnd = hwnd
@@ -65,12 +72,15 @@ def turn_two(class1,class2):
     WaitTime(2)
     class2.WindowsClickOther()
     WaitTime(2)
+    print("d")
 
 def snake_two(class1,class2,num,time):
+    WaitTime_wait(3)
     if num == "1":
         class1.WindowsClickFight()
     elif num == "2":
         class2.WindowsClickFight()
+    WaitTime_wait(time)
     turn_two(class1,class2)
     WaitTime_short(1)
     turn_two(class1, class2)
@@ -79,7 +89,7 @@ def snake_two(class1,class2,num,time):
     WaitTime_short(1)
     turn_two(class1, class2)
     WaitTime_short(1)
-    WaitTime_wait(time)
+    print("s")
     #print((win32api.GetAsyncKeyState(0x41)&0x8000))
     '''
     print(wd.GetWindowsHwnd())
@@ -224,7 +234,19 @@ class GetWindows():
 
 '''
 
-
+def stop_thread(thread, exctype=SystemExit):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(thread.ident)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
 
 
 
