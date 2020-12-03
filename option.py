@@ -44,12 +44,13 @@ class MyWindows:    #新建一个窗口类
         self.random_x_fight = random.uniform(0.92, 0.97)    #点击挑战的时候的位置坐标 坐标为组队的时候
         self.random_y_fight = random.uniform(0.84, 0.92)
         self.random_x_other = random.uniform(0.7, 0.74)
-        self.random_y_other = random.uniform(0.67, 0.69)
+        self.random_y_other = random.uniform(0.75, 0.76)
         self.random_x_YuLing = random.uniform(0.84, 0.88)
         self.random_y_YuLing = random.uniform(0.86, 0.88)
     def GetWindowsRect(self):   #更新窗口位置的大小并返回出
-        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.hwnd)
 
+        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.hwnd)
+        print(self.left, self.top, self.right, self.bottom)
        #return win32gui.GetWindowRect(self.hwnd)
     def ChangeWindows(self,left,top,width,hight):   #改变窗口的位置
         hwnd_return=win32gui.GetWindowText(self.hwnd)
@@ -62,6 +63,8 @@ class MyWindows:    #新建一个窗口类
         #return 0
     def WindowsMoveClick(self, random_x,random_y):
         MouseClick(int((self.right-self.left)*random_x)+self.left,int((self.bottom-self.top)*random_y)+self.top)
+        print(int((self.right-self.left)*random_x)+self.left)
+        print(int((self.bottom-self.top)*random_y)+self.top)
     def WindowsClickFight(self):
         self.WindowsMoveClick(self.random_x_fight,self.random_y_fight)
     def WindowsClickOther(self):
@@ -69,35 +72,37 @@ class MyWindows:    #新建一个窗口类
 
 def turn_two(class1,class2):
     class1.WindowsClickOther()
+    class1.WindowsClickOther()
     WaitTime(2)
+    class2.WindowsClickOther()
     class2.WindowsClickOther()
     WaitTime(2)
     print("d")
 
-def snake_two(class1,class2,num,time):
-    WaitTime_wait(3)
+def snake_two(class1,class2,num,times):
+
+    WaitTime_wait(1)
     if num == "1":
         class1.WindowsClickFight()
     elif num == "2":
         class2.WindowsClickFight()
-    WaitTime_wait(time)
+    WaitTime_wait(times)
     turn_two(class1,class2)
-    WaitTime_short(1)
+    WaitTime_short(3)
     turn_two(class1, class2)
-    WaitTime_short(1)
+    WaitTime_short(4)
     turn_two(class1, class2)
-    WaitTime_short(1)
+    WaitTime_short(2)
     turn_two(class1, class2)
-    WaitTime_short(1)
+    WaitTime_short(2)
+    turn_two(class1, class2)
     print("s")
     #print((win32api.GetAsyncKeyState(0x41)&0x8000))
     '''
-    print(wd.GetWindowsHwnd())
-    win32gui.SetForegroundWindow(wd.GetWindowsHwnd());
-    print(wd.GetWindowsPostion())
-    wd.DrawWindowsRect()
+    print(GetMousePosition())
     time.sleep(0.5)
-    '''
+    class1.GetWindowsRect()
+      '''
 
 '''
 def yuling_single():

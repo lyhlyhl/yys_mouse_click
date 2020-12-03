@@ -97,10 +97,10 @@ class Ui_start(qtui.Ui_MainWindow): #定义一个ui类继承Qt Designer生成的
             windows1=option.MyWindows(int(hwnd1))
             windows2=option.MyWindows(int(hwnd2))
 
-            if windows1.ChangeWindows(10, 10, 500, 500) == 1:
+            if windows1.ChangeWindows(10, 10, 840, 500) == 1:
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄1有误')
                 return
-            if windows2.ChangeWindows(10, 520, 500, 500) == 1:
+            if windows2.ChangeWindows(10, 520, 840, 500) == 1:
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄2有误')
                 return
             if num != "1" and num != "2":
