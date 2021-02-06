@@ -1,6 +1,8 @@
 # 痒痒鼠鼠标点击辅助脚本
 
-### 起源:kick_scooter:
+------
+
+## 起源​ :kick_scooter:
 
 灯姐的绘卷肝到我自闭，突发奇想能不能搞个脚本自己刷:hamburger:
 
@@ -8,9 +10,38 @@
 
 目前还在开发ing嘤嘤嘤:pensive:
 
+------
+
+## 如何开始 :beginner:
+
 ##### tip:需要以管理员身份运行程序，以pycharm为例，右击以管理员身份打开pycharm
 
-### 开发记录​ :pencil:
+##### 命令行则需要右键执行命令行（否则会出现鼠标点击失效的现象）
+
+![截图1](img\截图1.png)
+
+0. ### 需要环境：
+
+   python3.6+
+
+1. ### 配置环境:
+
+   ```powershell
+   #配置运行环境
+   pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+   ```
+
+2. 运行程序
+
+   ```powershell
+   python main.py
+   ```
+
+   或者是通过IDE直接运行main.py文件（比较推荐该方法）
+
+------
+
+## 开发记录​ ​ :pencil:
 
 2020/12/4 目前已经完成了双人御魂，比较稳定。
 
