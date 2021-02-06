@@ -8,69 +8,92 @@ import inspect
 import ctypes
 
 
-a=win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
-b=win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+a = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+b = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
 
-def MouseMove(x,y):     #移动鼠标的位置
+
+def MouseMove(x, y):  # 移动鼠标的位置
     win32api.SetCursorPos((x, y))
-def MouseClick(x=None,y=None):  #鼠标点击指定的地方
+
+
+def MouseClick(x=None, y=None):  # 鼠标点击指定的地方
     if not x is None and not y is None:
-        MouseMove(x,y)
+        MouseMove(x, y)
         time.sleep(0.005)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
     time.sleep(random.uniform(0.001, 0.02))
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
-def GetMousePosition():     #得到鼠标的位置
-     return win32api.GetCursorPos()
+
+
+def GetMousePosition():  # 得到鼠标的位置
+    return win32api.GetCursorPos()
+
+
 def GetWindowHwnd():
     X, Y = GetMousePosition()
     hwnd_value = win32gui.WindowFromPoint((X, Y))
     return hwnd_value
+
+
 def WaitTime(x):
     time.sleep(random.uniform(0.1, 0.5)*x)
+
 
 def WaitTime_short(x):
     time.sleep(random.uniform(0.01, 0.05)*x)
 
+
 def WaitTime_wait(x):
-    #if type(x) != "str"
+    # if type(x) != "str"
     if isinstance(x, int):
         time.sleep(x)
     else:
         time.sleep(int(x))
-class MyWindows:    #新建一个窗口类
-    def __init__(self,hwnd):
+
+
+class MyWindows:  # 新建一个窗口类
+    def __init__(self, hwnd):
         self.hwnd = hwnd
-        self.random_x_fight = random.uniform(0.92, 0.97)    #点击挑战的时候的位置坐标 坐标为组队的时候
+        self.random_x_fight = random.uniform(
+            0.92, 0.97)  # 点击挑战的时候的位置坐标 坐标为组队的时候
         self.random_y_fight = random.uniform(0.84, 0.92)
         self.random_x_other = random.uniform(0.7, 0.74)
         self.random_y_other = random.uniform(0.75, 0.76)
         self.random_x_YuLing = random.uniform(0.84, 0.88)
         self.random_y_YuLing = random.uniform(0.86, 0.88)
-    def GetWindowsRect(self):   #更新窗口位置的大小并返回出
 
-        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(self.hwnd)
+    def GetWindowsRect(self):  # 更新窗口位置的大小并返回出
+
+        self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(
+            self.hwnd)
         print(self.left, self.top, self.right, self.bottom)
-       #return win32gui.GetWindowRect(self.hwnd)
-    def ChangeWindows(self,left,top,width,hight):   #改变窗口的位置
-        hwnd_return=win32gui.GetWindowText(self.hwnd)
+       # return win32gui.GetWindowRect(self.hwnd)
+
+    def ChangeWindows(self, left, top, width, hight):  # 改变窗口的位置
+        hwnd_return = win32gui.GetWindowText(self.hwnd)
         if hwnd_return == "阴阳师-网易游戏":
-            win32gui.MoveWindow(self.hwnd, left, top, width, hight, True)   #改变应用的位置和大小
+            win32gui.MoveWindow(self.hwnd, left, top, width,
+                                hight, True)  # 改变应用的位置和大小
             self.GetWindowsRect()
         else:
             return 1
         return 0
-        #return 0
-    def WindowsMoveClick(self, random_x,random_y):
-        MouseClick(int((self.right-self.left)*random_x)+self.left,int((self.bottom-self.top)*random_y)+self.top)
+        # return 0
+
+    def WindowsMoveClick(self, random_x, random_y):
+        MouseClick(int((self.right-self.left)*random_x)+self.left,
+                   int((self.bottom-self.top)*random_y)+self.top)
         print(int((self.right-self.left)*random_x)+self.left)
         print(int((self.bottom-self.top)*random_y)+self.top)
-    def WindowsClickFight(self):
-        self.WindowsMoveClick(self.random_x_fight,self.random_y_fight)
-    def WindowsClickOther(self):
-        self.WindowsMoveClick(self.random_x_other,self.random_y_other)
 
-def turn_two(class1,class2):
+    def WindowsClickFight(self):
+        self.WindowsMoveClick(self.random_x_fight, self.random_y_fight)
+
+    def WindowsClickOther(self):
+        self.WindowsMoveClick(self.random_x_other, self.random_y_other)
+
+
+def turn_two(class1, class2):
     class1.WindowsClickOther()
     class1.WindowsClickOther()
     WaitTime(2)
@@ -79,7 +102,8 @@ def turn_two(class1,class2):
     WaitTime(2)
     print("d")
 
-def snake_two(class1,class2,num,times):
+
+def snake_two(class1, class2, num, times):
 
     WaitTime_wait(1)
     if num == "1":
@@ -87,7 +111,7 @@ def snake_two(class1,class2,num,times):
     elif num == "2":
         class2.WindowsClickFight()
     WaitTime_wait(times)
-    turn_two(class1,class2)
+    turn_two(class1, class2)
     WaitTime_short(3)
     turn_two(class1, class2)
     WaitTime_short(4)
@@ -97,12 +121,13 @@ def snake_two(class1,class2,num,times):
     WaitTime_short(2)
     turn_two(class1, class2)
     print("s")
-    #print((win32api.GetAsyncKeyState(0x41)&0x8000))
+    # print((win32api.GetAsyncKeyState(0x41)&0x8000))
     '''
     print(GetMousePosition())
     time.sleep(0.5)
     class1.GetWindowsRect()
       '''
+
 
 '''
 def yuling_single():
@@ -215,8 +240,7 @@ if __name__ == '__main__':
 
 
 #BO = BasicOption
-#BO.mouse_click(855,random.randint(984,1000))
-
+# BO.mouse_click(855,random.randint(984,1000))
 
 
 '''
@@ -239,12 +263,14 @@ class GetWindows():
 
 '''
 
+
 def stop_thread(thread, exctype=SystemExit):
     """raises the exception, performs cleanup if needed"""
     tid = ctypes.c_long(thread.ident)
     if not inspect.isclass(exctype):
         exctype = type(exctype)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(
+        tid, ctypes.py_object(exctype))
     if res == 0:
         raise ValueError("invalid thread id")
     elif res != 1:
@@ -252,10 +278,3 @@ def stop_thread(thread, exctype=SystemExit):
         # and you should call it again with exc=NULL to revert the effect"""
         ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
         raise SystemError("PyThreadState_SetAsyncExc failed")
-
-
-
-
-
-
-
