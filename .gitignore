@@ -3,4 +3,4 @@ my.txt
 __pycache__
 dist
 build
-.spec
+*.spec
