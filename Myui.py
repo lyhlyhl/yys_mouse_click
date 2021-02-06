@@ -14,10 +14,10 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         super().setupUi(Mainwindow)  # 初始化窗口
         self.Mainwindow = Mainwindow
         # self.action_2.clicked.connect(self.action2_solt)
-        self.Mainwindow.setWindowIcon(QIcon('img/myico.ico'))  # 设置窗口的图标
+        self.Mainwindow.setWindowIcon(QIcon('img/necessary/myico.ico'))  # 设置窗口的图标
         self.Mainwindow.resize(300, 300)
-        self.Mainwindow.setFixedSize(300, 300);#设置窗口大小
-        self.label1 = QLabel(self.Mainwindow)  # 开始界面为窗口的说明界面 里面的控件及其排布
+        self.Mainwindow.setFixedSize(300, 300)  # 设置窗口大小
+        self.label1 = QLabel(self.Mainwindow)  # 开始界面2为窗口的说明界面 里面的控件及其排布
         self.TextBrowser1 = QTextBrowser(self.Mainwindow)
         self.label1.setText("<h2>使用说明</h2>")
         self.TextBrowser1.setStyleSheet(
@@ -44,7 +44,7 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         self.widget.setParent(None)
         label1 = QLabel("窗口1的句柄", self.Mainwindow)
         label2 = QLabel("窗口2的句柄", self.Mainwindow)
-        label3 = QLabel("hwnd的值为: ", self.Mainwindow)
+        label3 = QLabel("窗口句柄的值为: ", self.Mainwindow)
 
         # = option.GetMousePosition()
         label4 = QLabel("暂无数据", self.Mainwindow)
@@ -53,7 +53,7 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
 
         t = threading.Thread(target=lambda: thead_SetHwndLabel(label4, label6))
         t.start()
-        label7 = QLabel("每轮时间", self.Mainwindow)
+        label7 = QLabel("每轮时间(秒)", self.Mainwindow)
         label8 = QLabel("开车窗口", self.Mainwindow)
 
         line1 = QLineEdit(self.Mainwindow)
@@ -64,11 +64,10 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         line3.setMaximumWidth(100)
         line4 = QLineEdit(self.Mainwindow)
         line4.setMaximumWidth(100)
-        line4.setPlaceholderText("填写数字1或者2")
+        line4.setPlaceholderText("数字1或者2")
 
         self.confirm_button = QPushButton('开始', self.Mainwindow)
-        self.confirm_button.clicked.connect(
-            lambda: self.action3_confirm(line1, line2, line3, line4))
+        self.confirm_button.clicked.connect(lambda: self.action3_confirm(line1, line2, line3, line4))
         self.cancel_button = QPushButton('停止', self.Mainwindow)
         confirm_button = self.confirm_button
         cancel_button = self.cancel_button
@@ -149,13 +148,3 @@ def thead_SetHwndLabel(label1, label2):  # 线程函数
         hwnd = option.GetWindowHwnd()
         label1.setText(str(hwnd))
         label2.setText(str(win32gui.GetWindowText(hwnd)))
-
-
-'''
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    MainWindow = QMainWindow()
-    ui=Ui_start(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
-'''
