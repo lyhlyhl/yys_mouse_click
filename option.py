@@ -66,7 +66,6 @@ class MyWindows:  # 新建一个窗口类
 
         self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(
             self.hwnd)
-        print(self.left, self.top, self.right, self.bottom)
        # return win32gui.GetWindowRect(self.hwnd)
 
     def ChangeWindows(self, left, top, width, hight):  # 改变窗口的位置
@@ -83,8 +82,6 @@ class MyWindows:  # 新建一个窗口类
     def WindowsMoveClick(self, random_x, random_y):
         MouseClick(int((self.right-self.left)*random_x)+self.left,
                    int((self.bottom-self.top)*random_y)+self.top)
-        print(int((self.right-self.left)*random_x)+self.left)
-        print(int((self.bottom-self.top)*random_y)+self.top)
 
     def WindowsClickFight(self):
         self.WindowsMoveClick(self.random_x_fight, self.random_y_fight)
@@ -100,7 +97,6 @@ def turn_two(class1, class2):
     class2.WindowsClickOther()
     class2.WindowsClickOther()
     WaitTime(2)
-    print("d")
 
 
 def snake_two(class1, class2, num, times):
@@ -120,13 +116,6 @@ def snake_two(class1, class2, num, times):
     turn_two(class1, class2)
     WaitTime_short(2)
     turn_two(class1, class2)
-    print("s")
-    # print((win32api.GetAsyncKeyState(0x41)&0x8000))
-    '''
-    print(GetMousePosition())
-    time.sleep(0.5)
-    class1.GetWindowsRect()
-      '''
 
 
 '''

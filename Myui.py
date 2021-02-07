@@ -1,10 +1,7 @@
 import qtui
-import sys
 import option
 import win32gui
-from PyQt5 import QtCore, QtGui, QtWidgets
 import threading
-from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout, QMainWindow, QVBoxLayout, QLineEdit, QFormLayout, QPushButton
 
@@ -14,7 +11,8 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         super().setupUi(Mainwindow)  # 初始化窗口
         self.Mainwindow = Mainwindow
         # self.action_2.clicked.connect(self.action2_solt)
-        self.Mainwindow.setWindowIcon(QIcon('img/necessary/myico.ico'))  # 设置窗口的图标
+        self.Mainwindow.setWindowIcon(
+            QIcon('img/necessary/myico.ico'))  # 设置窗口的图标
         self.Mainwindow.resize(300, 300)
         self.Mainwindow.setFixedSize(300, 300)  # 设置窗口大小
         self.label1 = QLabel(self.Mainwindow)  # 开始界面2为窗口的说明界面 里面的控件及其排布
@@ -28,9 +26,12 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
                                   "4.点击开始即可！需要停止的时候可以点击停止！\n"
                                   "PS:你需要组队打完第一把之后，也就是默认邀请的阶段\n")
 
-        self.action_3.triggered.connect(self.action3_solt)  # 建立菜单栏和槽函数的connect
-        self.layout_init()  # 布局
-        self.action3_running_flag = 0
+        self.action_3.triggered.connect(self.action3_solt)  # 双人御魂子界面connect
+        self.layout_init()  # 主界面布局
+        self.confirm_button = None
+        self.cancel_button = None
+        self.turnTimes = 0
+        #self.action3_running_flag = 0
 
     def layout_init(self):  # 控件的排布函数
         self.widget = QWidget()
@@ -50,11 +51,10 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         label4 = QLabel("暂无数据", self.Mainwindow)
         label5 = QLabel("进程标题： ", self.Mainwindow)
         label6 = QLabel("暂无数据", self.Mainwindow)
-
-        t = threading.Thread(target=lambda: thead_SetHwndLabel(label4, label6))
-        t.start()
         label7 = QLabel("每轮时间(秒)", self.Mainwindow)
         label8 = QLabel("开车窗口", self.Mainwindow)
+        label9 = QLabel("已经打了:", self.Mainwindow)
+        label10 = QLabel("0轮",self.Mainwindow)
 
         line1 = QLineEdit(self.Mainwindow)
         line1.setMaximumWidth(100)
@@ -66,6 +66,9 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         line4.setMaximumWidth(100)
         line4.setPlaceholderText("数字1或者2")
 
+        t = threading.Thread(target=lambda: self.thead_SetHwndLabel(label4, label6, label10))
+        t.start()
+
         self.confirm_button = QPushButton('开始', self.Mainwindow)
         self.confirm_button.clicked.connect(lambda: self.action3_confirm(line1, line2, line3, line4))
         self.cancel_button = QPushButton('停止', self.Mainwindow)
@@ -76,21 +79,26 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         s_layout = QHBoxLayout()
         ss_layout = QHBoxLayout()
         button_layout = QHBoxLayout()
+        turnsLayout = QHBoxLayout()
         all_v_layout = QVBoxLayout()
 
         s_layout.addWidget(label3)
         s_layout.addWidget(label4)
         ss_layout.addWidget(label5)
         ss_layout.addWidget(label6)
+        turnsLayout.addWidget(label9)
+        turnsLayout.addWidget(label10)
         f_layout.addRow(label1, line1)
         f_layout.addRow(label2, line2)
         f_layout.addRow(label7, line3)
         f_layout.addRow(label8, line4)
+
         button_layout.addWidget(confirm_button)
         button_layout.addWidget(cancel_button)
         all_v_layout.addLayout(s_layout)
         all_v_layout.addLayout(ss_layout)
         all_v_layout.addLayout(f_layout)
+        all_v_layout.addLayout(turnsLayout)
         all_v_layout.addLayout(button_layout)
         widget = QWidget()
         widget.setLayout(all_v_layout)
@@ -99,9 +107,10 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
     def action3_confirm(self, line1, line2, line3, line4):
         hwnd1 = line1.text()
         hwnd2 = line2.text()
-        Turntime = line3.text()
+        turnTimeEach = line3.text()
         num = line4.text()
-        if hwnd1 != "" and hwnd2 != "" and Turntime != "":  # 判断是不是都是空的 只有不为空才能往下
+        self.turnTimes = 0
+        if hwnd1 != "" and hwnd2 != "" and turnTimeEach != "":  # 判断是不是都是空的 只有不为空才能往下
             windows1 = option.MyWindows(int(hwnd1))
             windows2 = option.MyWindows(int(hwnd2))
 
@@ -116,7 +125,7 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
                 return
 
             self.clicktread = threading.Thread(target=lambda: self.action3_thead_MouseClick(
-                windows1, windows2, num, Turntime, 2))
+                windows1, windows2, num, turnTimeEach, 2))
             self.clicktread.start()
             self.cancel_button.clicked.connect(
                 lambda: self.action3_cancel(line1, line2, line3, line4))
@@ -136,15 +145,19 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
     def action3_cannotClick(self):
         QMessageBox.information(self.Mainwindow, '提示', '请先停止当前的点击！')
 
+    #动作线程
     def action3_thead_MouseClick(self, window1, window2, num, time, flag):
         if flag == 2:
             option.turn_two(window1, window2)
             while (1):
+                self.turnTimes += 1
                 option.snake_two(window1, window2, num, time)
 
+    #保持label标签同步线程函数
+    def thead_SetHwndLabel(self, label1, label2, label3):
+        while 1:
+            hwnd = option.GetWindowHwnd()
+            label1.setText(str(hwnd))
+            label2.setText(str(win32gui.GetWindowText(hwnd)))
+            label3.setText(str(hwnd)+"轮")
 
-def thead_SetHwndLabel(label1, label2):  # 线程函数
-    while 1:
-        hwnd = option.GetWindowHwnd()
-        label1.setText(str(hwnd))
-        label2.setText(str(win32gui.GetWindowText(hwnd)))
