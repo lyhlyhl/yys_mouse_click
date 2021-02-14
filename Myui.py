@@ -44,6 +44,10 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
 class DoubleYuHun(Ui_start):
     def __init__(self,oldWindows):
         super(DoubleYuHun, self).__init__(oldWindows)
+
+        self.turnTimes = 0
+
+
         # self.widget.setParent(None)
         self.label1 = QLabel("窗口1的句柄", self.Mainwindow)
         self.label2 = QLabel("窗口2的句柄", self.Mainwindow)
@@ -111,7 +115,7 @@ class DoubleYuHun(Ui_start):
         hwnd2 = self.line2.text()
         turnTimeEach = self.line3.text()
         num = self.line4.text()
-        self.turnTimes = 0
+
         if hwnd1 != "" and hwnd2 != "" and turnTimeEach != "":  # 判断是不是都是空的 只有不为空才能往下
             windows1 = option.MyWindows(int(hwnd1))
             windows2 = option.MyWindows(int(hwnd2))
@@ -140,6 +144,8 @@ class DoubleYuHun(Ui_start):
         self.cancel_button.clicked.disconnect()
         self.confirm_button.clicked.connect(self.action3_confirm)
         self.confirm_button.clicked.disconnect(self.action3_cannotClick)
+        self.turnTimes = 0
+        self.label10.setText(str(self.turnTimes) + "轮")
         QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
 
     def action3_cannotClick(self):
@@ -152,6 +158,7 @@ class DoubleYuHun(Ui_start):
             while (1):
                 self.turnTimes += 1
                 option.snake_two(window1, window2, num, time)
+                self.label10.setText(str(self.turnTimes)+"轮")
     def test(self):
         print(1)
 
