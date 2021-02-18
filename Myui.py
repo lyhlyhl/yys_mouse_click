@@ -2,15 +2,21 @@ import qtui
 import option
 import win32gui
 import threading
-from PyQt5.QtGui import QIcon
+
+from PyQt5.QtGui import QIcon,QMouseEvent
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout, QMainWindow, QVBoxLayout, QLineEdit, QFormLayout, QPushButton
-from PyQt5.QtCore import QTimer
 import time
+
+
+global optionStaus #负责所有线程的停止
+optionStaus = 0
+
 class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成的类
     def __init__(self, Mainwindow):
         self.Mainwindow = Mainwindow
         super().setupUi(self.Mainwindow)  # 初始化窗口
         # self.action_2.clicked.connect(self.action2_solt)
+
         self.Mainwindow.setWindowIcon(
             QIcon('img/necessary/myico.ico'))  # 设置窗口的图标
         self.Mainwindow.resize(300, 300)
@@ -42,14 +48,21 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         self.Mainwindow.setCentralWidget(self.widget)
 
     def action3_solt(self): #双人御魂
-        action3 = DoubleYuHun(self.Mainwindow)
+        global optionStaus
+        if optionStaus == 0:
+            action3 = DoubleYuHun(self.Mainwindow)
+        else:
+            QMessageBox.information(self.Mainwindow, '提示', '请先停止当前的点击！')
     def action9_solt(self): #点击指定地点
-        action9 = SelectedPlace(self.Mainwindow)
+        global optionStaus
+        if optionStaus == 0:
+            action9 = SelectedPlace(self.Mainwindow)
+        else:
+            QMessageBox.information(self.Mainwindow, '提示', '请先停止当前的点击！')
 
 
 class DoubleYuHun(Ui_start):
     def __init__(self,oldWindows):
-
         self.Mainwindow = oldWindows
         self.turnTimes = 0
 
@@ -109,17 +122,15 @@ class DoubleYuHun(Ui_start):
         self.Mainwindow.setCentralWidget(self.widget)
 
         # 这里太离谱了，必须使用一个lambda之后才能connect成功
-        self.confirm_button.clicked.connect(lambda: self.test1())
         self.confirm_button.clicked.connect(self.action3_confirm)
-        self.cancel_button.clicked.connect(self.test2)
-        #self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6))
-        #self.labelChange.start()
-    def test1(self):
-        print(2)
-    def test2(self):
-        print(2)
+
+        self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6))
+        self.labelChange.start()
 
     def action3_confirm(self):
+        global optionStaus
+        optionStaus = 1
+
         hwnd1 = self.line1.text()
         hwnd2 = self.line2.text()
         turnTimeEach = self.line3.text()
@@ -149,6 +160,9 @@ class DoubleYuHun(Ui_start):
             QMessageBox.information(self.Mainwindow, '提示', '请勿输入为空')
 
     def action3_cancel(self):
+        global optionStaus
+        optionStaus = 0
+
         option.stop_thread(self.clicktread)
         self.cancel_button.clicked.disconnect()
         self.confirm_button.clicked.connect(self.action3_confirm)
@@ -162,6 +176,8 @@ class DoubleYuHun(Ui_start):
 
     # 动作线程
     def action3_thead_MouseClick(self, window1, window2, num, time, flag):
+        global optionStaus
+
         if flag == 2:
             option.turn_two(window1, window2)
             while (1):
@@ -219,3 +235,6 @@ def thead_SetHwndLabel(label1,label2):
             time.sleep(0.1)
     except:
         pass
+
+
+
