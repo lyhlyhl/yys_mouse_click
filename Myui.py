@@ -26,9 +26,15 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
                                   "4.点击开始即可！需要停止的时候可以点击停止！\n"
                                   "PS:你需要组队打完第一把之后，也就是默认邀请的阶段\n")
 
-        self.action_3.triggered.connect(self.action3_solt)  # 双人御魂子界面connect
         self.layout_init()  # 主界面布局
+        self.singleConnect()
 
+
+    def singleConnect(self):
+        self.action_3.triggered.connect(self.action3_solt)  # 双人御魂子界面connect
+        self.action_3.triggered.connect(lambda: print(1))
+        self.action_9.triggered.connect(self.action9_solt)  # 点击指定地点子界面connect
+        self.action_9.triggered.connect(lambda: print(1))
     def layout_init(self):  # 控件的排布函数
         self.widget = QWidget()
         self.v_layout = QVBoxLayout()
@@ -38,21 +44,23 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         self.Mainwindow.setCentralWidget(self.widget)
 
     def action3_solt(self): #双人御魂
+        print(2)
         action3 = DoubleYuHun(self.Mainwindow)
+    def action9_solt(self): #点击指定地点
+        print(3)
+        action9 = SelectedPlace(self.Mainwindow)
 
 
 class DoubleYuHun(Ui_start):
     def __init__(self,oldWindows):
-        super(DoubleYuHun, self).__init__(oldWindows)
 
+        self.Mainwindow = oldWindows
         self.turnTimes = 0
-
 
         # self.widget.setParent(None)
         self.label1 = QLabel("窗口1的句柄", self.Mainwindow)
         self.label2 = QLabel("窗口2的句柄", self.Mainwindow)
         self.label3 = QLabel("窗口句柄的值为: ", self.Mainwindow)
-
         self.label4 = QLabel("暂无数据", self.Mainwindow)
         self.label5 = QLabel("进程标题： ", self.Mainwindow)
         self.label6 = QLabel("暂无数据", self.Mainwindow)
@@ -71,11 +79,9 @@ class DoubleYuHun(Ui_start):
         self.line4.setMaximumWidth(100)
         self.line4.setPlaceholderText("数字1或者2")
 
-        # t = threading.Thread(target=lambda: self.thead_SetHwndLabel(label4, label6, label10))
-        # t.start()
-
         self.confirm_button = QPushButton('开始', self.Mainwindow)
-        self.confirm_button.clicked.connect(self.action3_confirm)
+        self.confirm_button.clicked.connect(self.test1)
+        #self.confirm_button.clicked.connect(lambda :self.test1())
         self.cancel_button = QPushButton('停止', self.Mainwindow)
 
         f_layout = QFormLayout()  # 1
@@ -103,12 +109,15 @@ class DoubleYuHun(Ui_start):
         all_v_layout.addLayout(f_layout)
         all_v_layout.addLayout(turnsLayout)
         all_v_layout.addLayout(button_layout)
+
         self.widget = QWidget()
         self.widget.setLayout(all_v_layout)
         self.Mainwindow.setCentralWidget(self.widget)
 
-        self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6))
-        self.labelChange.start()
+        #self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6))
+        #self.labelChange.start()
+    def test1(self):
+        print(2)
 
     def action3_confirm(self):
         hwnd1 = self.line1.text()
@@ -158,18 +167,55 @@ class DoubleYuHun(Ui_start):
             while (1):
                 self.turnTimes += 1
                 option.snake_two(window1, window2, num, time)
-                self.label10.setText(str(self.turnTimes)+"轮")
-    def test(self):
-        print(1)
+
+class SelectedPlace(Ui_start):
+    def __init__(self, oldWindows):
+        self.Mainwindow = oldWindows
+        self.label1 = QLabel("窗口句柄的值为: ", self.Mainwindow)
+        self.label2 = QLabel("暂无数据", self.Mainwindow)
+        self.label3 = QLabel("进程标题： ", self.Mainwindow)
+        self.label4 = QLabel("暂无数据", self.Mainwindow)
+        self.label5 = QLabel("窗口的句柄", self.Mainwindow)
+        self.label6 = QLabel("每轮时间(秒)", self.Mainwindow)
+
+        self.line1 = QLineEdit(self.Mainwindow)
+        self.line1.setMaximumWidth(100)
+        self.line2 = QLineEdit(self.Mainwindow)
+        self.line2.setMaximumWidth(100)
+        self.line2.setPlaceholderText("数字1或者2")
+
+        self.confirm_button = QPushButton('开始', self.Mainwindow)
+        #self.confirm_button.clicked.connect(self.action3_confirm)
+        self.cancel_button = QPushButton('停止', self.Mainwindow)
+
+        layout1 = QFormLayout() #负责显示左右一对一的
+        buttonLayout = QHBoxLayout()
+        layoutAll = QVBoxLayout()
+        layout1.addRow(self.label1, self.label2)
+        layout1.addRow(self.label3, self.label4)
+        layout1.addRow(self.label5,self.line1)
+        layout1.addRow(self.label6, self.line2)
+        buttonLayout.addWidget(self.confirm_button)
+        buttonLayout.addWidget(self.cancel_button)
+
+        layoutAll.addLayout(layout1)
+        layoutAll.addLayout(buttonLayout)
+
+        self.widget = QWidget()
+        self.widget.setLayout(layoutAll)
+        self.Mainwindow.setCentralWidget(self.widget)
 
 
 # 保持label标签同步线程函数
 def thead_SetHwndLabel(label1,label2):
-    oldHwnd = 0
-    while(1):
-        hwnd = option.GetWindowHwnd()
-        if oldHwnd != hwnd:
-            label1.setText(str(hwnd))
-            label2.setText(str(win32gui.GetWindowText(hwnd)))
-        oldHwnd = hwnd
-        time.sleep(0.1)
+    try:
+        oldHwnd = 0
+        while(1):
+            hwnd = option.GetWindowHwnd()
+            if oldHwnd != hwnd:
+                label1.setText(str(hwnd))
+                label2.setText(str(win32gui.GetWindowText(hwnd)))
+            oldHwnd = hwnd
+            time.sleep(0.1)
+    except:
+        pass

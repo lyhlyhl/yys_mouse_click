@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>508</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -39,6 +39,7 @@
     <addaction name="action_5"/>
     <addaction name="action_6"/>
     <addaction name="action_8"/>
+    <addaction name="action_9"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -83,6 +84,11 @@
   <action name="action_8">
    <property name="text">
     <string>觉醒材料</string>
+   </property>
+  </action>
+  <action name="action_9">
+   <property name="text">
+    <string>指定地点</string>
    </property>
   </action>
  </widget>
