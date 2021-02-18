@@ -32,9 +32,7 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
 
     def singleConnect(self):
         self.action_3.triggered.connect(self.action3_solt)  # 双人御魂子界面connect
-        self.action_3.triggered.connect(lambda: print(1))
         self.action_9.triggered.connect(self.action9_solt)  # 点击指定地点子界面connect
-        self.action_9.triggered.connect(lambda: print(1))
     def layout_init(self):  # 控件的排布函数
         self.widget = QWidget()
         self.v_layout = QVBoxLayout()
@@ -44,10 +42,8 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         self.Mainwindow.setCentralWidget(self.widget)
 
     def action3_solt(self): #双人御魂
-        print(2)
         action3 = DoubleYuHun(self.Mainwindow)
     def action9_solt(self): #点击指定地点
-        print(3)
         action9 = SelectedPlace(self.Mainwindow)
 
 
@@ -79,10 +75,8 @@ class DoubleYuHun(Ui_start):
         self.line4.setMaximumWidth(100)
         self.line4.setPlaceholderText("数字1或者2")
 
-        self.confirm_button = QPushButton('开始', self.Mainwindow)
-        self.confirm_button.clicked.connect(self.test1)
-        #self.confirm_button.clicked.connect(lambda :self.test1())
         self.cancel_button = QPushButton('停止', self.Mainwindow)
+        self.confirm_button = QPushButton('开始', self.Mainwindow)
 
         f_layout = QFormLayout()  # 1
         s_layout = QHBoxLayout()
@@ -114,9 +108,15 @@ class DoubleYuHun(Ui_start):
         self.widget.setLayout(all_v_layout)
         self.Mainwindow.setCentralWidget(self.widget)
 
+        # 这里太离谱了，必须使用一个lambda之后才能connect成功
+        self.confirm_button.clicked.connect(lambda: self.test1())
+        self.confirm_button.clicked.connect(self.action3_confirm)
+        self.cancel_button.clicked.connect(self.test2)
         #self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6))
         #self.labelChange.start()
     def test1(self):
+        print(2)
+    def test2(self):
         print(2)
 
     def action3_confirm(self):
