@@ -36,7 +36,7 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
         self.singleConnect()
 
 
-    def singleConnect(self):
+    def singleConnect(self):   #信号连接函数
         self.action_3.triggered.connect(self.action3_solt)  # 双人御魂子界面connect
         self.action_9.triggered.connect(self.action9_solt)  # 点击指定地点子界面connect
     def layout_init(self):  # 控件的排布函数
@@ -66,6 +66,7 @@ class DoubleYuHun(Ui_start):
         self.Mainwindow = oldWindows
         self.turnTimes = 0
 
+        #下面一大坨都是布局用的和各种控件
         # self.widget.setParent(None)
         self.label1 = QLabel("窗口1的句柄", self.Mainwindow)
         self.label2 = QLabel("窗口2的句柄", self.Mainwindow)
@@ -122,12 +123,13 @@ class DoubleYuHun(Ui_start):
         self.Mainwindow.setCentralWidget(self.widget)
 
         # 这里太离谱了，必须使用一个lambda之后才能connect成功
-        self.confirm_button.clicked.connect(self.action3_confirm)
+        self.confirm_button.clicked.connect(self.action3_confirm) #确认的槽信号
 
-        self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6))
+        #改变标签显示句柄用的线程函数
+        self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6,None))
         self.labelChange.start()
 
-    def action3_confirm(self):
+    def action3_confirm(self):  #确认按键的槽函数
         global optionStaus
         optionStaus = 1
 
@@ -153,6 +155,7 @@ class DoubleYuHun(Ui_start):
             self.clicktread = threading.Thread(target=lambda: self.action3_thead_MouseClick(
                 windows1, windows2, num, turnTimeEach, 2))
             self.clicktread.start()
+
             self.cancel_button.clicked.connect(self.action3_cancel)
             self.confirm_button.clicked.disconnect()
             self.confirm_button.clicked.connect(self.action3_cannotClick)
@@ -191,17 +194,26 @@ class SelectedPlace(Ui_start):
         self.label2 = QLabel("暂无数据", self.Mainwindow)
         self.label3 = QLabel("进程标题： ", self.Mainwindow)
         self.label4 = QLabel("暂无数据", self.Mainwindow)
-        self.label5 = QLabel("窗口的句柄", self.Mainwindow)
-        self.label6 = QLabel("每轮时间(秒)", self.Mainwindow)
+        self.label5 = QLabel("窗口的句柄:", self.Mainwindow)
+        self.label6 = QLabel("每轮时间(秒):", self.Mainwindow)
+        self.label7 = QLabel("当前鼠标位置:",self.Mainwindow)
+        self.label8 = QLabel("暂无数据",self.Mainwindow)
+        self.label9 = QLabel("开始点击位置(X,Y):",self.Mainwindow)
+        self.label10 = QLabel("其他点击的位置(X,Y):",self.Mainwindow)
 
         self.line1 = QLineEdit(self.Mainwindow)
         self.line1.setMaximumWidth(100)
         self.line2 = QLineEdit(self.Mainwindow)
         self.line2.setMaximumWidth(100)
         self.line2.setPlaceholderText("数字1或者2")
+        self.line3 = QLineEdit(self.Mainwindow)
+        self.line3.setMaximumWidth(100)
+        self.line3.setPlaceholderText("(100,200)")
+        self.line4 = QLineEdit(self.Mainwindow)
+        self.line4.setMaximumWidth(100)
+        self.line4.setPlaceholderText("(100,200)")
 
         self.confirm_button = QPushButton('开始', self.Mainwindow)
-        #self.confirm_button.clicked.connect(self.action3_confirm)
         self.cancel_button = QPushButton('停止', self.Mainwindow)
 
         layout1 = QFormLayout() #负责显示左右一对一的
@@ -209,8 +221,12 @@ class SelectedPlace(Ui_start):
         layoutAll = QVBoxLayout()
         layout1.addRow(self.label1, self.label2)
         layout1.addRow(self.label3, self.label4)
+        layout1.addRow(self.label7, self.label8)
         layout1.addRow(self.label5,self.line1)
         layout1.addRow(self.label6, self.line2)
+        layout1.addRow(self.label9, self.line3)
+        layout1.addRow(self.label10, self.line4)
+
         buttonLayout.addWidget(self.confirm_button)
         buttonLayout.addWidget(self.cancel_button)
 
@@ -221,16 +237,23 @@ class SelectedPlace(Ui_start):
         self.widget.setLayout(layoutAll)
         self.Mainwindow.setCentralWidget(self.widget)
 
+        # 改变标签显示句柄用的线程函数
+        self.labelChange = threading.Thread(target=lambda: thead_SetHwndLabel(self.label2, self.label4, self.label8))
+        self.labelChange.start()
 
 # 保持label标签同步线程函数
-def thead_SetHwndLabel(label1,label2):
+def thead_SetHwndLabel(label1, label2, label3):
     try:
         oldHwnd = 0
         while(1):
             hwnd = option.GetWindowHwnd()
+            X, Y = option.GetMousePosition()
             if oldHwnd != hwnd:
                 label1.setText(str(hwnd))
                 label2.setText(str(win32gui.GetWindowText(hwnd)))
+
+            if label3 != None:
+                label3.setText("({0},{1})".format(X, Y))
             oldHwnd = hwnd
             time.sleep(0.1)
     except:
