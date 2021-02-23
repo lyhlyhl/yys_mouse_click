@@ -200,18 +200,19 @@ class SelectedPlace(Ui_start):
         self.label8 = QLabel("暂无数据",self.Mainwindow)
         self.label9 = QLabel("开始点击位置(X,Y):",self.Mainwindow)
         self.label10 = QLabel("其他点击的位置(X,Y):",self.Mainwindow)
+        self.label11 = QLabel("已经打了:",self.Mainwindow)
+        self.label12 = QLabel("0轮",self.Mainwindow)
 
         self.line1 = QLineEdit(self.Mainwindow)
         self.line1.setMaximumWidth(100)
         self.line2 = QLineEdit(self.Mainwindow)
         self.line2.setMaximumWidth(100)
-        self.line2.setPlaceholderText("数字1或者2")
         self.line3 = QLineEdit(self.Mainwindow)
         self.line3.setMaximumWidth(100)
-        self.line3.setPlaceholderText("(100,200)")
+        self.line3.setPlaceholderText("例如100 200")
         self.line4 = QLineEdit(self.Mainwindow)
         self.line4.setMaximumWidth(100)
-        self.line4.setPlaceholderText("(100,200)")
+        self.line4.setPlaceholderText("例如100 200")
 
         self.confirm_button = QPushButton('开始', self.Mainwindow)
         self.cancel_button = QPushButton('停止', self.Mainwindow)
@@ -226,6 +227,7 @@ class SelectedPlace(Ui_start):
         layout1.addRow(self.label6, self.line2)
         layout1.addRow(self.label9, self.line3)
         layout1.addRow(self.label10, self.line4)
+        layout1.addRow(self.label11, self.label12)
 
         buttonLayout.addWidget(self.confirm_button)
         buttonLayout.addWidget(self.cancel_button)
@@ -237,9 +239,37 @@ class SelectedPlace(Ui_start):
         self.widget.setLayout(layoutAll)
         self.Mainwindow.setCentralWidget(self.widget)
 
+        self.confirm_button.clicked.connect(self.action9_confirm)
         # 改变标签显示句柄用的线程函数
         self.labelChange = threading.Thread(target=lambda: thead_SetHwndLabel(self.label2, self.label4, self.label8))
         self.labelChange.start()
+    def action9_confirm(self):
+        global optionStaus
+        optionStaus = 1
+
+        self.hwnd = self.line1.text()
+        self.turnTimeEach = self.line2.text()
+        self.begainPos = self.line3.text()
+        self.otherPos = self.line4.text()
+        if self.hwnd != "" and self.turnTimeEach != "" and self.begainPos != ""and self.otherPos != "":
+            bgX,bgY = self.posTransition(self.begainPos)
+            otherX,otherY = self.posTransition(self.otherPos)
+            try:
+                self.bgX = int(bgX)
+                self.bgY = int(bgY)
+                self.otherX = int(otherX)
+                self.otherY = int(otherY)
+            except:
+                QMessageBox.information(self.Mainwindow, '提示', '请按示例格式输入！')
+                return
+
+
+        else:
+            QMessageBox.information(self.Mainwindow, '提示', '请勿输入为空')
+            return
+    def posTransition(self,posStr):
+        splitStr = posStr.split(' ')
+        return splitStr[0],splitStr[1]
 
 # 保持label标签同步线程函数
 def thead_SetHwndLabel(label1, label2, label3):
