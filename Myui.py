@@ -153,7 +153,7 @@ class DoubleYuHun(Ui_start):
                 return
 
             self.clicktread = threading.Thread(target=lambda: self.action3_thead_MouseClick(
-                windows1, windows2, num, turnTimeEach, 2))
+                windows1, windows2, num, turnTimeEach))
             self.clicktread.start()
 
             self.cancel_button.clicked.connect(self.action3_cancel)
@@ -178,14 +178,12 @@ class DoubleYuHun(Ui_start):
         QMessageBox.information(self.Mainwindow, '提示', '请先停止当前的点击！')
 
     # 动作线程
-    def action3_thead_MouseClick(self, window1, window2, num, time, flag):
-        global optionStaus
+    def action3_thead_MouseClick(self, window1, window2, num, time):
 
-        if flag == 2:
-            option.turn_two(window1, window2)
-            while (1):
-                self.turnTimes += 1
-                option.snake_two(window1, window2, num, time)
+        option.turn_two(window1, window2)
+        while (1):
+            self.turnTimes += 1
+            option.snake_two(window1, window2, num, time)
 
 class SelectedPlace(Ui_start):
     def __init__(self, oldWindows):
@@ -263,10 +261,21 @@ class SelectedPlace(Ui_start):
                 QMessageBox.information(self.Mainwindow, '提示', '请按示例格式输入！')
                 return
 
+            self.windows = option.MyWindows(int(self.hwnd))
+            if self.windows.ChangeWindows(10, 10, 840, 500) == 1:
+                QMessageBox.information(self.Mainwindow, '提示', '输入句柄有误')
+                return
+            self.clicktread = threading.Thread(target=self.action3_thead_MouseClick)
+            self.clicktread.start()
+
 
         else:
             QMessageBox.information(self.Mainwindow, '提示', '请勿输入为空')
             return
+
+    def action3_thead_MouseClick(self):
+        pass
+
     def posTransition(self,posStr):
         splitStr = posStr.split(' ')
         return splitStr[0],splitStr[1]
