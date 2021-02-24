@@ -6,7 +6,7 @@ import threading
 from PyQt5.QtGui import QIcon,QMouseEvent
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout, QMainWindow, QVBoxLayout, QLineEdit, QFormLayout, QPushButton
 import time
-
+import random
 
 global optionStaus #负责所有线程的停止
 optionStaus = 0
@@ -238,6 +238,7 @@ class SelectedPlace(Ui_start):
         self.Mainwindow.setCentralWidget(self.widget)
 
         self.confirm_button.clicked.connect(self.action9_confirm)
+        self.cancel_button.clicked.connect(self.action9_cancel)
         # 改变标签显示句柄用的线程函数
         self.labelChange = threading.Thread(target=lambda: thead_SetHwndLabel(self.label2, self.label4, self.label8))
         self.labelChange.start()
@@ -262,19 +263,34 @@ class SelectedPlace(Ui_start):
                 return
 
             self.windows = option.MyWindows(int(self.hwnd))
-            if self.windows.ChangeWindows(10, 10, 840, 500) == 1:
+            if self.windows.checkWindows() == 1:
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄有误')
                 return
-            self.clicktread = threading.Thread(target=self.action3_thead_MouseClick)
+            self.windows.random_Wx_select = self.bgX
+            self.windows.random_Wy_select = self.bgY
+            self.windows.random_Wx_other_select = self.otherX
+            self.windows.random_Wy_other_select = self.otherY
+
+            self.clicktread = threading.Thread(target=self.action9_thead_MouseClick)
             self.clicktread.start()
 
 
         else:
             QMessageBox.information(self.Mainwindow, '提示', '请勿输入为空')
             return
+    def action9_cancel(self):
+        global optionStaus
+        optionStaus = 0
 
-    def action3_thead_MouseClick(self):
-        pass
+        option.stop_thread(self.clicktread)
+        #self.label10.setText(str(self.turnTimes) + "轮")
+        QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
+
+    def action9_thead_MouseClick(self):
+        option.turnOneSelect(self.windows)
+        option.WaitTime(1)
+        while(1):
+            option.selectOne(self.windows, self.turnTimeEach)
 
     def posTransition(self,posStr):
         splitStr = posStr.split(' ')

@@ -54,20 +54,28 @@ def WaitTime_wait(x):
 class MyWindows:  # 新建一个窗口类
     def __init__(self, hwnd):
         self.hwnd = hwnd
-        self.random_x_fight = random.uniform(
-            0.92, 0.97)  # 点击挑战的时候的位置坐标 坐标为组队的时候
+        # 点击挑战的时候的位置坐标 坐标为组队的时候
+        self.random_x_fight = random.uniform(0.92, 0.97)
         self.random_y_fight = random.uniform(0.84, 0.92)
         self.random_x_other = random.uniform(0.7, 0.74)
         self.random_y_other = random.uniform(0.75, 0.76)
         self.random_x_YuLing = random.uniform(0.84, 0.88)
         self.random_y_YuLing = random.uniform(0.86, 0.88)
-
+        self.random_Wx_select = None
+        self.random_Wy_select = None
+        self.random_Wx_other_select = None
+        self.random_Wy_other_select = None
     def GetWindowsRect(self):  # 更新窗口位置的大小并返回出
 
         self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(
             self.hwnd)
-       # return win32gui.GetWindowRect(self.hwnd)
-
+    def checkWindows(self):
+        hwnd_return = win32gui.GetWindowText(self.hwnd)
+        if hwnd_return == "阴阳师-网易游戏":
+            self.GetWindowsRect()
+        else:
+            return 1
+        return 0
     def ChangeWindows(self, left, top, width, hight):  # 改变窗口的位置
         hwnd_return = win32gui.GetWindowText(self.hwnd)
         if hwnd_return == "阴阳师-网易游戏":
@@ -77,18 +85,28 @@ class MyWindows:  # 新建一个窗口类
         else:
             return 1
         return 0
-        # return 0
 
     def WindowsMoveClick(self, random_x, random_y):
         MouseClick(int((self.right-self.left)*random_x)+self.left,
                    int((self.bottom-self.top)*random_y)+self.top)
 
     def WindowsClickFight(self):
+        self.random_x_fight = random.uniform(0.92, 0.97)
+        self.random_y_fight = random.uniform(0.84, 0.92)
         self.WindowsMoveClick(self.random_x_fight, self.random_y_fight)
 
     def WindowsClickOther(self):
+        self.random_x_other = random.uniform(0.7, 0.74)
+        self.random_y_other = random.uniform(0.75, 0.76)
         self.WindowsMoveClick(self.random_x_other, self.random_y_other)
 
+    def WindowsClickSelectFight(self):
+        MouseClick(self.random_Wx_select+random.randint(-5, 5),
+                   self.random_Wy_select+random.randint(-5, 5))
+
+    def WindowsClickSelectOther(self):
+        MouseClick(self.random_Wx_other_select+random.randint(-5, 5),
+                   self.random_Wy_other_select+random.randint(-5, 5))
 
 def turn_two(class1, class2):
     class1.WindowsClickOther()
@@ -98,6 +116,9 @@ def turn_two(class1, class2):
     class2.WindowsClickOther()
     WaitTime(2)
 
+def turnOneSelect(class1):
+    class1.WindowsClickSelectOther()
+    WaitTime(1)
 
 def snake_two(class1, class2, num, times):
 
@@ -117,7 +138,18 @@ def snake_two(class1, class2, num, times):
     WaitTime_short(2)
     turn_two(class1, class2)
 
-
+def selectOne(class1,times):
+    WaitTime_wait(1)
+    class1.WindowsClickSelectFight()
+    WaitTime_wait(times)
+    class1.WindowsClickSelectOther()
+    WaitTime_short(2)
+    class1.WindowsClickSelectOther()
+    WaitTime_short(4)
+    class1.WindowsClickSelectOther()
+    WaitTime_short(5)
+    class1.WindowsClickSelectOther()
+    WaitTime_short(2)
 '''
 def yuling_single():
     time.sleep(1)
