@@ -1,0 +1,1 @@
+pyinstaller -w -i ./img/necessary/myico.ico -n yystool main.py

@@ -169,7 +169,6 @@ class DoubleYuHun(Ui_start):
         self.confirm_button.clicked.connect(self.action3_confirm)
         self.confirm_button.clicked.disconnect(self.action3_cannotClick)
         self.turnTimes = 0
-        self.label10.setText(str(self.turnTimes) + "轮")
         QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
 
     def action3_cannotClick(self):
@@ -182,8 +181,9 @@ class DoubleYuHun(Ui_start):
 
         option.turn_two(window1, window2)
         while (1):
-            self.turnTimes += 1
             option.snake_two(window1, window2, num, time)
+            self.turnTimes += 1
+            self.label10.setText(str(self.turnTimes) + "轮")
 
 class SelectedPlace(Ui_start):
     def __init__(self, oldWindows):

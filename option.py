@@ -55,8 +55,8 @@ class MyWindows:  # 新建一个窗口类
     def __init__(self, hwnd):
         self.hwnd = hwnd
         # 点击挑战的时候的位置坐标 坐标为组队的时候
-        self.random_x_fight = random.uniform(0.92, 0.97)
-        self.random_y_fight = random.uniform(0.84, 0.92)
+        self.random_x_fight = random.uniform(0.92, 0.95)
+        self.random_y_fight = random.uniform(0.84, 0.90)
         self.random_x_other = random.uniform(0.7, 0.74)
         self.random_y_other = random.uniform(0.75, 0.76)
         self.random_x_YuLing = random.uniform(0.84, 0.88)
