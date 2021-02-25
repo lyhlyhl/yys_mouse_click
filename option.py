@@ -40,7 +40,7 @@ def WaitTime(x):
 
 
 def WaitTime_short(x):
-    time.sleep(random.uniform(0.01, 0.05)*x)
+    time.sleep(random.uniform(0.02, 0.05)*x)
 
 
 def WaitTime_wait(x):
@@ -143,13 +143,15 @@ def selectOne(class1,times):
     class1.WindowsClickSelectFight()
     WaitTime_wait(times)
     class1.WindowsClickSelectOther()
-    WaitTime_short(2)
+    WaitTime_short(20)
+    class1.WindowsClickSelectOther()
+    WaitTime_short(22)
+    class1.WindowsClickSelectOther()
+    WaitTime_short(22)
+    class1.WindowsClickSelectOther()
+    WaitTime_short(40)
     class1.WindowsClickSelectOther()
     WaitTime_short(4)
-    class1.WindowsClickSelectOther()
-    WaitTime_short(5)
-    class1.WindowsClickSelectOther()
-    WaitTime_short(2)
 '''
 def yuling_single():
     time.sleep(1)

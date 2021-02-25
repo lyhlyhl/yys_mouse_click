@@ -2,7 +2,7 @@ import qtui
 import option
 import win32gui
 import threading
-
+import re
 from PyQt5.QtGui import QIcon,QMouseEvent
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout, QMainWindow, QVBoxLayout, QLineEdit, QFormLayout, QPushButton
 import time
@@ -30,7 +30,7 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
                                   "2.你需要先填写句柄号码（窗口代号）会有显示\n"
                                   "3.填写好等待的时间和开车的窗口号码\n"
                                   "4.点击开始即可！需要停止的时候可以点击停止！\n"
-                                  "PS:你需要组队打完第一把之后，也就是默认邀请的阶段\n")
+                                  "PS:如果是多人你需要组队打完第一把之后，也就是默认邀请的阶段\n")
 
         self.layout_init()  # 主界面布局
         self.singleConnect()
@@ -130,8 +130,6 @@ class DoubleYuHun(Ui_start):
         self.labelChange.start()
 
     def action3_confirm(self):  #确认按键的槽函数
-        global optionStaus
-        optionStaus = 1
 
         hwnd1 = self.line1.text()
         hwnd2 = self.line2.text()
@@ -179,6 +177,8 @@ class DoubleYuHun(Ui_start):
 
     # 动作线程
     def action3_thead_MouseClick(self, window1, window2, num, time):
+        global optionStaus
+        optionStaus = 1
 
         option.turn_two(window1, window2)
         while (1):
@@ -188,6 +188,8 @@ class DoubleYuHun(Ui_start):
 class SelectedPlace(Ui_start):
     def __init__(self, oldWindows):
         self.Mainwindow = oldWindows
+        self.turnTimes = 0
+
         self.label1 = QLabel("窗口句柄的值为: ", self.Mainwindow)
         self.label2 = QLabel("暂无数据", self.Mainwindow)
         self.label3 = QLabel("进程标题： ", self.Mainwindow)
@@ -238,13 +240,12 @@ class SelectedPlace(Ui_start):
         self.Mainwindow.setCentralWidget(self.widget)
 
         self.confirm_button.clicked.connect(self.action9_confirm)
-        self.cancel_button.clicked.connect(self.action9_cancel)
+
         # 改变标签显示句柄用的线程函数
         self.labelChange = threading.Thread(target=lambda: thead_SetHwndLabel(self.label2, self.label4, self.label8))
         self.labelChange.start()
     def action9_confirm(self):
-        global optionStaus
-        optionStaus = 1
+        self.turnTimes = 0
 
         self.hwnd = self.line1.text()
         self.turnTimeEach = self.line2.text()
@@ -264,7 +265,10 @@ class SelectedPlace(Ui_start):
 
             self.windows = option.MyWindows(int(self.hwnd))
             if self.windows.checkWindows() == 1:
-                QMessageBox.information(self.Mainwindow, '提示', '输入句柄有误')
+                QMessageBox.information(self.Mainwindow, '提示', '输入句柄有误！')
+                return
+            if self.bgX > 1920 or self.bgX < 0 or self.bgY > 1080 or self.bgY < 0 or self.otherX > 1920 or self.otherX < 0 or self.otherY > 1920 or self.otherY < 0:
+                QMessageBox.information(self.Mainwindow, '提示', '请输入正确范围的数字！')
                 return
             self.windows.random_Wx_select = self.bgX
             self.windows.random_Wy_select = self.bgY
@@ -274,6 +278,10 @@ class SelectedPlace(Ui_start):
             self.clicktread = threading.Thread(target=self.action9_thead_MouseClick)
             self.clicktread.start()
 
+            self.cancel_button.clicked.connect(self.action9_cancel)
+            self.confirm_button.clicked.disconnect(self.action9_confirm)
+            self.confirm_button.clicked.connect(self.action9_cannotClick)
+
 
         else:
             QMessageBox.information(self.Mainwindow, '提示', '请勿输入为空')
@@ -282,19 +290,31 @@ class SelectedPlace(Ui_start):
         global optionStaus
         optionStaus = 0
 
+        self.cancel_button.clicked.disconnect()
+        self.confirm_button.clicked.connect(self.action9_confirm)
+        self.confirm_button.clicked.disconnect(self.action9_cannotClick)
+
         option.stop_thread(self.clicktread)
-        #self.label10.setText(str(self.turnTimes) + "轮")
         QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
 
+    def action9_cannotClick(self):
+        QMessageBox.information(self.Mainwindow, '提示', '请先停止当前的点击！')
+
     def action9_thead_MouseClick(self):
+        global optionStaus
+        optionStaus = 1
+
         option.turnOneSelect(self.windows)
         option.WaitTime(1)
         while(1):
             option.selectOne(self.windows, self.turnTimeEach)
+            self.turnTimes += 1
+            self.label12.setText(str(self.turnTimes) + "轮")
 
     def posTransition(self,posStr):
-        splitStr = posStr.split(' ')
-        return splitStr[0],splitStr[1]
+        pattern = re.compile(r'-?\d+')
+        numStr = pattern.findall(posStr)
+        return numStr[0], numStr[1]
 
 # 保持label标签同步线程函数
 def thead_SetHwndLabel(label1, label2, label3):
