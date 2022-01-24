@@ -140,10 +140,11 @@ class DoubleYuHun(Ui_start):
             windows1 = option.MyWindows(int(hwnd1))
             windows2 = option.MyWindows(int(hwnd2))
 
-            if windows1.ChangeWindows(10, 10, 840, 500) == 1:
+            # 1080显示的值840 500
+            if windows1.ChangeWindows(10, 10, 1100, 665) == 1: #比例刚刚好这个比例，大概在1.6541左右
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄1有误')
                 return
-            if windows2.ChangeWindows(10, 520, 840, 500) == 1:
+            if windows2.ChangeWindows(10, 670, 1100, 665) == 1:
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄2有误')
                 return
             if num != "1" and num != "2":
@@ -178,7 +179,6 @@ class DoubleYuHun(Ui_start):
     def action3_thead_MouseClick(self, window1, window2, num, time):
         global optionStaus
         optionStaus = 1
-
         option.turn_two(window1, window2)
         while (1):
             option.snake_two(window1, window2, num, time)

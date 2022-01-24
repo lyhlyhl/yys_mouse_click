@@ -6,6 +6,8 @@ import threading
 import random
 import inspect
 import ctypes
+import pyautogui
+from PyQt5.QtWidgets import QApplication
 
 
 a = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
@@ -85,15 +87,27 @@ class MyWindows:  # 新建一个窗口类
         else:
             return 1
         return 0
-
+'''
+1.需要完成随机函数
+2.丰富找不到的情况时候的图片
+3.开始逐步完成并替代点击的函数逻辑
+'''
+######################################################
+    def Myrandom(self,left,top,width,height): #未完成
+        return left+(width//2), top+(height//2)
+##########################################################
     def WindowsMoveClick(self, random_x, random_y):
         MouseClick(int((self.right-self.left)*random_x)+self.left,
                    int((self.bottom-self.top)*random_y)+self.top)
-
+    def WindowsMoveClick2(self,x,y):
+        MouseClick(x,y)
     def WindowsClickFight(self):
-        self.random_x_fight = random.uniform(0.92, 0.97)
-        self.random_y_fight = random.uniform(0.84, 0.92)
-        self.WindowsMoveClick(self.random_x_fight, self.random_y_fight)
+        #self.random_x_fight = random.uniform(0.92, 0.97)
+        #self.random_y_fight = random.uniform(0.84, 0.92)
+        pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
+        x, y = self.Myrandom(pos.left, pos.top, pos.width, pos.height)
+        self.WindowsMoveClick2(x, y)
+        print(x,y)
 
     def WindowsClickOther(self):
         self.random_x_other = random.uniform(0.7, 0.74)
@@ -107,6 +121,21 @@ class MyWindows:  # 新建一个窗口类
     def WindowsClickSelectOther(self):
         MouseClick(self.random_Wx_other_select+random.randint(-5, 5),
                    self.random_Wy_other_select+random.randint(-5, 5))
+    def getWindowsScreen(self):
+        screen = QApplication.primaryScreen()
+        img = screen.grabWindow(self.hwnd).toImage()
+        print(type(img))
+        img.save("{}.jpg".format(self.hwnd))
+    def getAllPhotosPos(self, filename):
+        empos = pyautogui.locateAllOnScreen(filename)
+        return empos
+    def getPhotoPos(self,filename):
+        posBox =  pyautogui.locateOnScreen(filename)
+        if posBox is not None:
+            return
+        else
+            return posBox
+
 
 def turn_two(class1, class2):
     class1.WindowsClickOther()
@@ -152,140 +181,6 @@ def selectOne(class1,times):
     WaitTime_short(40)
     class1.WindowsClickSelectOther()
     WaitTime_short(4)
-'''
-def yuling_single():
-    time.sleep(1)
-    mouse_click(860,random.randint(458,478))
-    time.sleep(70)
-    mouse_click(550,random.randint(479,500))
-    time.sleep(1)
-    mouse_click(550, random.randint(479,500))
-    time.sleep(1)
-    mouse_click(550, random.randint(479,500))
-    time.sleep(1)
-def yuling_trouble():
-    time.sleep(5)
-    while 1:
-        time.sleep(1)
-        mouse_click(855,random.randint(984,1000))
-        time.sleep(80)
-        mouse_click(random.randint(527,653),999)
-        time.sleep(1)
-        mouse_click(random.randint(527,653),999)
-        time.sleep(1)
-        mouse_click(random.randint(527,653),999)
-        time.sleep(1)
-
-
-def yuling3():
-    time.sleep(45)
-    while 1:
-        time.sleep(1)
-        mouse_click(1729,random.randint(957,985))
-        time.sleep(85)
-        mouse_click(random.randint(1427,1553),979)
-        time.sleep(1)
-        mouse_click(random.randint(1427,1553),979)
-        time.sleep(1)
-        mouse_click(random.randint(1427,1553),979)
-        time.sleep(1)
-def turn_three():
-    mouse_click(550, random.randint(400, 450))
-    time.sleep(random.uniform(0.1, 0.5))
-    mouse_click(random.randint(527, 653), 999)
-    time.sleep(random.uniform(0.1, 0.5))
-    mouse_click(random.randint(1427, 1553), 979)
-    time.sleep(random.uniform(0.1, 0.5))
-def three_snake_11():
-    while 1:
-        mouse_click(1729, random.randint(957, 985))
-        time.sleep(80)
-        turn_three()
-        time.sleep(1)
-        turn_three()
-        time.sleep(1)
-        turn_three()
-        time.sleep(1)
-        turn_three()
-        time.sleep(3)
-
-def turn_two():
-    mouse_click(random.randint(400, 450),400)
-    time.sleep(random.uniform(0.1, 0.5))
-    mouse_click(random.randint(527, 653), 930)
-    time.sleep(random.uniform(0.1, 0.5))
-def two_snake_11():
-    while 1:
-        turn_two()
-        time.sleep(3)
-        mouse_click( random.randint(879, 889),random.randint(445, 456))
-        time.sleep(50)
-        turn_two()
-        time.sleep(1)
-        turn_two()
-        time.sleep(1)
-        turn_two()
-        time.sleep(1)
-
-
-
-#mouse_click(1729, random.randint(957, 985))
-#yuling1()
-#yuling1()
-#get_position()
-#yuling()
-#print(s)
-#three_snake_11()
-#two_snake_11()
-
-print(x)
-print(y)
-mouse_move(331,818)
-while 1:
-    mouse_click(331, 798)
-    time.sleep(3)
-    print(1)
-
-
-
-# 每隔10秒钟执行
-def t2():
-    yuling1()
-if __name__ == '__main__':
-    t = threading.Thread(target=t2)
-   # v = threading.Thread(target=yuling3)
-    t.start()
-    #v.start()
-    yuling2()
-    t.join()
-    #v.join()
-'''
-
-
-#BO = BasicOption
-# BO.mouse_click(855,random.randint(984,1000))
-
-
-'''
-
-class GetWindows():
-    def __init__(self):
-        self.spying = False
-
-    def mouseMoveEvent(self):
-        curX, curY = win32gui.GetCursorPos()
-        hwnd = win32gui.WindowFromPoint((curX, curY))
-        print(hwnd)
-        time.sleep(0.2)
-
-
-#wind = GetWindows()
-#while(1):
-#    wind.mouseMoveEvent()
-
-
-'''
-
 
 def stop_thread(thread, exctype=SystemExit):
     """raises the exception, performs cleanup if needed"""
