@@ -7,6 +7,7 @@ from PyQt5.QtGui import QIcon,QMouseEvent
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout, QMainWindow, QVBoxLayout, QLineEdit, QFormLayout, QPushButton
 import time
 import random
+import pyautogui
 
 global optionStaus #负责所有线程的停止
 optionStaus = 0
@@ -181,9 +182,18 @@ class DoubleYuHun(Ui_start):
         optionStaus = 1
         option.turn_two(window1, window2)
         while (1):
-            option.snake_two(window1, window2, num, time)
+            option.snake_two(window1, window2, num, time) #得分离开来将一次事件
             self.turnTimes += 1
             self.label10.setText(str(self.turnTimes) + "轮")
+            if self.turnTimes >= 100:
+                QMessageBox.information(self.Mainwindow, '提示', '请勿刷过多次！')
+                break
+            if pyautogui.locateOnScreen("./img/necessary/toomany.png") is not None:
+                QMessageBox.information(self.Mainwindow, '提示', '奇怪的事情发生了！')
+                break
+        self.cancel_button.clicked.disconnect()
+        self.confirm_button.clicked.connect(self.action3_confirm)
+        self.confirm_button.clicked.disconnect(self.action3_cannotClick)
 
 class SelectedPlace(Ui_start):
     def __init__(self, oldWindows):

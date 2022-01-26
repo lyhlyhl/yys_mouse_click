@@ -87,11 +87,11 @@ class MyWindows:  # 新建一个窗口类
         else:
             return 1
         return 0
-'''
-1.需要完成随机函数
-2.丰富找不到的情况时候的图片
-3.开始逐步完成并替代点击的函数逻辑
-'''
+    '''
+    1.需要完成随机函数
+    2.丰富找不到的情况时候的图片
+    3.开始逐步完成并替代点击的函数逻辑
+    '''
 ######################################################
     def Myrandom(self,left,top,width,height): #未完成
         return left+(width//2), top+(height//2)
@@ -102,12 +102,11 @@ class MyWindows:  # 新建一个窗口类
     def WindowsMoveClick2(self,x,y):
         MouseClick(x,y)
     def WindowsClickFight(self):
-        #self.random_x_fight = random.uniform(0.92, 0.97)
-        #self.random_y_fight = random.uniform(0.84, 0.92)
-        pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
-        x, y = self.Myrandom(pos.left, pos.top, pos.width, pos.height)
-        self.WindowsMoveClick2(x, y)
-        print(x,y)
+        self.random_x_fight = random.uniform(0.92, 0.97)
+        self.random_y_fight = random.uniform(0.84, 0.92)
+        #pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
+        #x, y = self.Myrandom(pos.left, pos.top, pos.width, pos.height)
+        self.WindowsMoveClick(self.random_x_fight, self.random_y_fight)
 
     def WindowsClickOther(self):
         self.random_x_other = random.uniform(0.7, 0.74)
@@ -133,7 +132,7 @@ class MyWindows:  # 新建一个窗口类
         posBox =  pyautogui.locateOnScreen(filename)
         if posBox is not None:
             return
-        else
+        else:
             return posBox
 
 
