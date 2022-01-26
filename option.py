@@ -8,18 +8,21 @@ import inspect
 import ctypes
 import pyautogui
 from PyQt5.QtWidgets import QApplication
+from datetime import datetime
 
-
+random.seed(datetime.now())
 a = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
 b = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
 
+
+# 基础操作
 
 def MouseMove(x, y):  # 移动鼠标的位置
     win32api.SetCursorPos((x, y))
 
 
 def MouseClick(x=None, y=None):  # 鼠标点击指定的地方
-    if not x is None and not y is None:
+    if x is not None and y is not None:
         MouseMove(x, y)
         time.sleep(0.005)
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
@@ -38,11 +41,11 @@ def GetWindowHwnd():
 
 
 def WaitTime(x):
-    time.sleep(random.uniform(0.1, 0.5)*x)
+    time.sleep(random.uniform(0.1, 0.5) * x)
 
 
 def WaitTime_short(x):
-    time.sleep(random.uniform(0.02, 0.05)*x)
+    time.sleep(random.uniform(0.02, 0.05) * x)
 
 
 def WaitTime_wait(x):
@@ -52,6 +55,8 @@ def WaitTime_wait(x):
     else:
         time.sleep(int(x))
 
+
+# 窗口类的一些操作
 
 class MyWindows:  # 新建一个窗口类
     def __init__(self, hwnd):
@@ -67,17 +72,20 @@ class MyWindows:  # 新建一个窗口类
         self.random_Wy_select = None
         self.random_Wx_other_select = None
         self.random_Wy_other_select = None
+
     def GetWindowsRect(self):  # 更新窗口位置的大小并返回出
 
         self.left, self.top, self.right, self.bottom = win32gui.GetWindowRect(
             self.hwnd)
-    def checkWindows(self):
+
+    def checkWindows(self):  # 检查窗口防止句柄输入错误
         hwnd_return = win32gui.GetWindowText(self.hwnd)
         if hwnd_return == "阴阳师-网易游戏":
             self.GetWindowsRect()
         else:
             return 1
         return 0
+
     def ChangeWindows(self, left, top, width, hight):  # 改变窗口的位置
         hwnd_return = win32gui.GetWindowText(self.hwnd)
         if hwnd_return == "阴阳师-网易游戏":
@@ -87,26 +95,42 @@ class MyWindows:  # 新建一个窗口类
         else:
             return 1
         return 0
-    '''
-    1.需要完成随机函数
-    2.丰富找不到的情况时候的图片
+
+    '''TODO:
+    1.需要完成随机函数 √
+    2.丰富找不到的情况时候的图片 任务√ 御魂满√
     3.开始逐步完成并替代点击的函数逻辑
     '''
-######################################################
-    def Myrandom(self,left,top,width,height): #未完成
-        return left+(width//2), top+(height//2)
-##########################################################
+    #测试随机函数
+    def posClickRandom(self, left, top, width, height):  # 分别为框左边 框顶 框宽度 框高度
+        return left + random.randint(1, width), top + random.randint(1, height)
+
+    def getWindowsScreen(self):  # 获取游戏截图，目前无用
+        screen = QApplication.primaryScreen()
+        img = screen.grabWindow(self.hwnd).toImage()
+        img.save("{}.jpg".format(self.hwnd))
+
+###########################################################
+    def getAllPhotosPos(self, filename): #需要测试
+        emposs = pyautogui.locateAllOnScreen(filename)
+        myemposs = []
+        for pos in emposs:
+            myemposs.append(pos)
+        return myemposs
+
+    def getPhotoPos(self, filename):
+        posBox = pyautogui.locateOnScreen(filename)
+        return posBox
+
+    # 点击部分代码
     def WindowsMoveClick(self, random_x, random_y):
-        MouseClick(int((self.right-self.left)*random_x)+self.left,
-                   int((self.bottom-self.top)*random_y)+self.top)
-    def WindowsMoveClick2(self,x,y):
-        MouseClick(x,y)
-    def WindowsClickFight(self):
-        self.random_x_fight = random.uniform(0.92, 0.97)
-        self.random_y_fight = random.uniform(0.84, 0.92)
-        #pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
-        #x, y = self.Myrandom(pos.left, pos.top, pos.width, pos.height)
-        self.WindowsMoveClick(self.random_x_fight, self.random_y_fight)
+        MouseClick(int((self.right - self.left) * random_x) + self.left,
+                   int((self.bottom - self.top) * random_y) + self.top)
+
+    def WindowsClickSnackFight(self):
+        pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
+        x, y = self.posClickRandom(pos.left, pos.top, pos.width, pos.height)
+        MouseClick(x, y)
 
     def WindowsClickOther(self):
         self.random_x_other = random.uniform(0.7, 0.74)
@@ -114,26 +138,12 @@ class MyWindows:  # 新建一个窗口类
         self.WindowsMoveClick(self.random_x_other, self.random_y_other)
 
     def WindowsClickSelectFight(self):
-        MouseClick(self.random_Wx_select+random.randint(-5, 5),
-                   self.random_Wy_select+random.randint(-5, 5))
+        MouseClick(self.random_Wx_select + random.randint(-5, 5),
+                   self.random_Wy_select + random.randint(-5, 5))
 
     def WindowsClickSelectOther(self):
-        MouseClick(self.random_Wx_other_select+random.randint(-5, 5),
-                   self.random_Wy_other_select+random.randint(-5, 5))
-    def getWindowsScreen(self):
-        screen = QApplication.primaryScreen()
-        img = screen.grabWindow(self.hwnd).toImage()
-        print(type(img))
-        img.save("{}.jpg".format(self.hwnd))
-    def getAllPhotosPos(self, filename):
-        empos = pyautogui.locateAllOnScreen(filename)
-        return empos
-    def getPhotoPos(self,filename):
-        posBox =  pyautogui.locateOnScreen(filename)
-        if posBox is not None:
-            return
-        else:
-            return posBox
+        MouseClick(self.random_Wx_other_select + random.randint(-5, 5),
+                   self.random_Wy_other_select + random.randint(-5, 5))
 
 
 def turn_two(class1, class2):
@@ -144,17 +154,19 @@ def turn_two(class1, class2):
     class2.WindowsClickOther()
     WaitTime(2)
 
+
 def turnOneSelect(class1):
     class1.WindowsClickSelectOther()
     WaitTime(1)
 
+# 用图片来判断结束与否，是否会消耗过多的时间？无所谓好像
+# 测试时间 图片对比所需时间
 def snake_two(class1, class2, num, times):
-
     WaitTime_wait(1)
     if num == "1":
-        class1.WindowsClickFight()
+        class1.WindowsClickSnackFight()
     elif num == "2":
-        class2.WindowsClickFight()
+        class2.WindowsClickSnackFight()
     WaitTime_wait(times)
     turn_two(class1, class2)
     WaitTime_short(3)
@@ -166,7 +178,8 @@ def snake_two(class1, class2, num, times):
     WaitTime_short(2)
     turn_two(class1, class2)
 
-def selectOne(class1,times):
+
+def selectOne(class1, times):
     WaitTime_wait(1)
     class1.WindowsClickSelectFight()
     WaitTime_wait(times)
@@ -180,6 +193,7 @@ def selectOne(class1,times):
     WaitTime_short(40)
     class1.WindowsClickSelectOther()
     WaitTime_short(4)
+
 
 def stop_thread(thread, exctype=SystemExit):
     """raises the exception, performs cleanup if needed"""
