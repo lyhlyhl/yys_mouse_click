@@ -93,6 +93,10 @@ class DoubleYuHun(Ui_start):
         self.cancel_button = QPushButton('停止', self.Mainwindow)
         self.confirm_button = QPushButton('开始', self.Mainwindow)
 
+        self.runFlag = 0    # action是否被停止的flag
+        determineTread = threading.Thread(target=self.determineAction)  #开启监测线程
+        determineTread.start()
+
         f_layout = QFormLayout()  # 1
         s_layout = QHBoxLayout()
         ss_layout = QHBoxLayout()
@@ -152,9 +156,9 @@ class DoubleYuHun(Ui_start):
                 QMessageBox.information(self.Mainwindow, '提示', '请输入数字1或2')
                 return
 
-            self.clicktread = threading.Thread(target=lambda: self.action3_thead_MouseClick(
+            self.clickTread = threading.Thread(target=lambda: self.action3_thead_MouseClick(
                 windows1, windows2, num, turnTimeEach))
-            self.clicktread.start()
+            self.clickTread.start()
 
             self.cancel_button.clicked.connect(self.action3_cancel)
             self.confirm_button.clicked.disconnect()
@@ -166,7 +170,7 @@ class DoubleYuHun(Ui_start):
         global optionStaus
         optionStaus = 0
 
-        option.stop_thread(self.clicktread)
+        option.stop_thread(self.clickTread)
         self.cancel_button.clicked.disconnect()
         self.confirm_button.clicked.connect(self.action3_confirm)
         self.confirm_button.clicked.disconnect(self.action3_cannotClick)
@@ -182,19 +186,26 @@ class DoubleYuHun(Ui_start):
         optionStaus = 1
         option.turn_two(window1, window2)
         while (1):
-            option.snake_two(window1, window2, num, time) #得分离开来将一次事件
+            option.snake_two(window1, window2, num, time) # 得分离开来将一次事件
             self.turnTimes += 1
             self.label10.setText(str(self.turnTimes) + "轮")
             if self.turnTimes >= 100:
-                QMessageBox.information(self.Mainwindow, '提示', '请勿刷过多次！')
-                break
+                self.runFlag = 1
             if pyautogui.locateOnScreen("./img/necessary/toomany.png") is not None:
-                QMessageBox.information(self.Mainwindow, '提示', '奇怪的事情发生了！')
-                break
-        self.cancel_button.clicked.disconnect()
-        self.confirm_button.clicked.connect(self.action3_confirm)
-        self.confirm_button.clicked.disconnect(self.action3_cannotClick)
+                self.runFlag = 1
 
+    def determineAction(self):  # 设置一个检测的线程检测是否action应该被停止
+        while(1):
+            if self.runFlag == 1:
+                global optionStaus
+                optionStaus = 0
+
+                option.stop_thread(self.clickTread)
+                self.cancel_button.clicked.disconnect()
+                self.confirm_button.clicked.connect(lambda:self.action3_confirm())
+                self.confirm_button.clicked.disconnect(self.action3_cannotClick)
+                self.turnTimes = 0
+                self.runFlag = 0
 class SelectedPlace(Ui_start):
     def __init__(self, oldWindows):
         self.Mainwindow = oldWindows

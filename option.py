@@ -101,9 +101,8 @@ class MyWindows:  # 新建一个窗口类
     2.丰富找不到的情况时候的图片 任务√ 御魂满√
     3.开始逐步完成并替代点击的函数逻辑
     '''
-    #测试随机函数
     def posClickRandom(self, left, top, width, height):  # 分别为框左边 框顶 框宽度 框高度
-        return left + random.randint(1, width), top + random.randint(1, height)
+        return left + random.randint(1, width), top + random.randint(1, height) #有概率点不到
 
     def getWindowsScreen(self):  # 获取游戏截图，目前无用
         screen = QApplication.primaryScreen()
@@ -116,6 +115,7 @@ class MyWindows:  # 新建一个窗口类
         myemposs = []
         for pos in emposs:
             myemposs.append(pos)
+        print(myemposs)
         return myemposs
 
     def getPhotoPos(self, filename):
@@ -129,8 +129,13 @@ class MyWindows:  # 新建一个窗口类
 
     def WindowsClickSnackFight(self):
         pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
-        x, y = self.posClickRandom(pos.left, pos.top, pos.width, pos.height)
-        MouseClick(x, y)
+        print(pos)
+        if pos is not None:
+            x, y = self.posClickRandom(pos.left, pos.top, pos.width, pos.height)
+            MouseClick(x, y)
+            return 1
+        else:
+            return 0
 
     def WindowsClickOther(self):
         self.random_x_other = random.uniform(0.7, 0.74)
