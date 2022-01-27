@@ -20,8 +20,8 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
 
         self.Mainwindow.setWindowIcon(
             QIcon('img/necessary/myico.ico'))  # 设置窗口的图标
-        self.Mainwindow.resize(300, 300)
-        self.Mainwindow.setFixedSize(300, 300)  # 设置窗口大小
+        self.Mainwindow.resize(400, 400)
+        self.Mainwindow.setFixedSize(400, 400)  # 设置窗口大小
         self.label1 = QLabel(self.Mainwindow)  # 开始界面2为窗口的说明界面 里面的控件及其排布
         self.TextBrowser1 = QTextBrowser(self.Mainwindow)
         self.label1.setText("<h2>使用说明</h2>")
