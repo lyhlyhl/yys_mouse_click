@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdi
 import time
 import random
 import pyautogui
+import time
+
 
 global optionStaus #负责所有线程的停止
 optionStaus = 0
@@ -66,7 +68,6 @@ class DoubleYuHun(Ui_start):
     def __init__(self,oldWindows):
         self.Mainwindow = oldWindows
         self.turnTimes = 0
-
         #下面一大坨都是布局用的和各种控件
         # self.widget.setParent(None)
         self.label1 = QLabel("窗口1的句柄", self.Mainwindow)
@@ -94,8 +95,6 @@ class DoubleYuHun(Ui_start):
         self.confirm_button = QPushButton('开始', self.Mainwindow)
 
         self.runFlag = 0    # action是否被停止的flag
-        determineTread = threading.Thread(target=self.determineAction)  #开启监测线程
-        determineTread.start()
 
         f_layout = QFormLayout()  # 1
         s_layout = QHBoxLayout()
@@ -127,20 +126,22 @@ class DoubleYuHun(Ui_start):
         self.widget.setLayout(all_v_layout)
         self.Mainwindow.setCentralWidget(self.widget)
 
+        determineTread = threading.Thread(target=self.determineAction)  # 开启监测线程
+        determineTread.start()
+
         # 这里太离谱了，必须使用一个lambda之后才能connect成功
         self.confirm_button.clicked.connect(self.action3_confirm) #确认的槽信号
 
         #改变标签显示句柄用的线程函数
         self.labelChange = threading.Thread(target=lambda :thead_SetHwndLabel(self.label4, self.label6,None))
         self.labelChange.start()
-
     def action3_confirm(self):  #确认按键的槽函数
 
         hwnd1 = self.line1.text()
         hwnd2 = self.line2.text()
         turnTimeEach = self.line3.text()
         num = self.line4.text()
-
+        print(1)
         if hwnd1 != "" and hwnd2 != "" and turnTimeEach != "":  # 判断是不是都是空的 只有不为空才能往下
             windows1 = option.MyWindows(int(hwnd1))
             windows2 = option.MyWindows(int(hwnd2))
@@ -169,6 +170,7 @@ class DoubleYuHun(Ui_start):
     def action3_cancel(self):
         global optionStaus
         optionStaus = 0
+        print(1)
 
         option.stop_thread(self.clickTread)
         self.cancel_button.clicked.disconnect()
@@ -195,6 +197,7 @@ class DoubleYuHun(Ui_start):
                 self.runFlag = 1
 
     def determineAction(self):  # 设置一个检测的线程检测是否action应该被停止
+
         while(1):
             if self.runFlag == 1:
                 global optionStaus
@@ -206,6 +209,15 @@ class DoubleYuHun(Ui_start):
                 self.confirm_button.clicked.disconnect(self.action3_cannotClick)
                 self.turnTimes = 0
                 self.runFlag = 0
+            time.sleep(0.5)
+
+
+
+
+
+
+
+
 class SelectedPlace(Ui_start):
     def __init__(self, oldWindows):
         self.Mainwindow = oldWindows
