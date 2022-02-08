@@ -193,7 +193,7 @@ class DoubleYuHun(Ui_start):
             self.label10.setText(str(self.turnTimes) + "轮")
             if self.turnTimes >= 100:
                 self.runFlag = 1
-            if pyautogui.locateOnScreen("./img/necessary/toomany.png") is not None:
+            if pyautogui.locateOnScreen("./img/necessary/toomany.png",confidence = 0.6 ) is not None:
                 self.runFlag = 1
 
     def determineAction(self):  # 设置一个检测的线程检测是否action应该被停止

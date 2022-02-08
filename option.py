@@ -119,7 +119,7 @@ class MyWindows:  # 新建一个窗口类
         return myemposs
 
     def getPhotoPos(self, filename):
-        posBox = pyautogui.locateOnScreen(filename)
+        posBox = pyautogui.locateOnScreen(filename, confidence = 0.6)
         return posBox
 
     # 点击部分代码
