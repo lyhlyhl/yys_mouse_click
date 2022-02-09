@@ -129,7 +129,6 @@ class MyWindows:  # 新建一个窗口类
 
     def WindowsClickSnackFight(self):
         pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
-        print(pos)
         if pos is not None:
             x, y = self.posClickRandom(pos.left, pos.top, pos.width, pos.height)
             MouseClick(x, y)

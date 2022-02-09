@@ -5,8 +5,7 @@ import threading
 import re
 from PyQt5.QtGui import QIcon,QMouseEvent
 from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdit, QTextBrowser, QHBoxLayout, QVBoxLayout, QMainWindow, QVBoxLayout, QLineEdit, QFormLayout, QPushButton
-import time
-import random
+from PyQt5.QtCore import pyqtSignal, QObject
 import pyautogui
 import time
 
@@ -18,7 +17,6 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
     def __init__(self, Mainwindow):
         self.Mainwindow = Mainwindow
         super().setupUi(self.Mainwindow)  # 初始化窗口
-        # self.action_2.clicked.connect(self.action2_solt)
 
         self.Mainwindow.setWindowIcon(
             QIcon('img/necessary/myico.ico'))  # 设置窗口的图标
@@ -64,8 +62,11 @@ class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成�
             QMessageBox.information(self.Mainwindow, '提示', '请先停止当前的点击！')
 
 
-class DoubleYuHun(Ui_start):
+class DoubleYuHun(Ui_start, QObject):
+    signalCancel = pyqtSignal(str)
     def __init__(self,oldWindows):
+        super(QObject, self).__init__()
+        super(Ui_start, self).__init__()
         self.Mainwindow = oldWindows
         self.turnTimes = 0
         #下面一大坨都是布局用的和各种控件
@@ -126,8 +127,9 @@ class DoubleYuHun(Ui_start):
         self.widget.setLayout(all_v_layout)
         self.Mainwindow.setCentralWidget(self.widget)
 
-        determineTread = threading.Thread(target=self.determineAction)  # 开启监测线程
-        determineTread.start()
+        #determineTread = threading.Thread(target=self.determineAction)  # 开启监测线程
+        #determineTread.start()
+        self.signalCancel.connect(self.action3_cancel)
 
         # 这里太离谱了，必须使用一个lambda之后才能connect成功
         self.confirm_button.clicked.connect(self.action3_confirm) #确认的槽信号
@@ -141,7 +143,7 @@ class DoubleYuHun(Ui_start):
         hwnd2 = self.line2.text()
         turnTimeEach = self.line3.text()
         num = self.line4.text()
-        print(1)
+        print("确定点击")
         if hwnd1 != "" and hwnd2 != "" and turnTimeEach != "":  # 判断是不是都是空的 只有不为空才能往下
             windows1 = option.MyWindows(int(hwnd1))
             windows2 = option.MyWindows(int(hwnd2))
@@ -167,17 +169,20 @@ class DoubleYuHun(Ui_start):
         else:
             QMessageBox.information(self.Mainwindow, '提示', '请勿输入为空')
 
-    def action3_cancel(self):
+    def action3_cancel(self, text=None):
         global optionStaus
         optionStaus = 0
-        print(1)
+        print("取消点击")
 
         option.stop_thread(self.clickTread)
         self.cancel_button.clicked.disconnect()
         self.confirm_button.clicked.connect(self.action3_confirm)
         self.confirm_button.clicked.disconnect(self.action3_cannotClick)
         self.turnTimes = 0
-        QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
+        tipText = '成功停止！'
+        if text is not None:
+            tipText = text
+        QMessageBox.information(self.Mainwindow, '提示', tipText)
 
     def action3_cannotClick(self):
         QMessageBox.information(self.Mainwindow, '提示', '请先停止当前的点击！')
@@ -192,25 +197,25 @@ class DoubleYuHun(Ui_start):
             self.turnTimes += 1
             self.label10.setText(str(self.turnTimes) + "轮")
             if self.turnTimes >= 100:
-                self.runFlag = 1
+                self.signalCancel.emit("别刷辣别刷辣！我要累死了！")
             if pyautogui.locateOnScreen("./img/necessary/toomany.png",confidence = 0.6 ) is not None:
-                self.runFlag = 1
+                self.signalCancel.emit("御魂太多啦，停下清理御魂吧！")
 
-    def determineAction(self):  # 设置一个检测的线程检测是否action应该被停止
-
+    '''def determineAction(self):  # 设置一个检测的线程检测是否action应该被停止
         while(1):
             if self.runFlag == 1:
-                global optionStaus
-                optionStaus = 0
-
                 option.stop_thread(self.clickTread)
                 self.cancel_button.clicked.disconnect()
-                self.confirm_button.clicked.connect(lambda:self.action3_confirm())
+                self.confirm_button.clicked.connect(self.action3_confirm)
                 self.confirm_button.clicked.disconnect(self.action3_cannotClick)
                 self.turnTimes = 0
-                self.runFlag = 0
-            time.sleep(0.5)
 
+                self.turnTimes = 0
+                self.runFlag = 0
+                print("已停止")
+            time.sleep(0.5)
+            print(1)
+    '''
 
 
 
@@ -323,9 +328,9 @@ class SelectedPlace(Ui_start):
         global optionStaus
         optionStaus = 0
 
-        self.cancel_button.clicked.disconnect()
-        self.confirm_button.clicked.connect(self.action9_confirm)
-        self.confirm_button.clicked.disconnect(self.action9_cannotClick)
+        #self.cancel_button.clicked.disconnect()
+        #self.confirm_button.clicked.connect(self.action9_confirm)
+        #self.confirm_button.clicked.disconnect(self.action9_cannotClick)
 
         option.stop_thread(self.clicktread)
         QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
