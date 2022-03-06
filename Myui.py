@@ -8,10 +8,15 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QWidget, QLabel, QTextEdi
 from PyQt5.QtCore import pyqtSignal, QObject
 import pyautogui
 import time
-from signal import mySignal
-
+from mysignal import mySignal
+import win32api
+import win32con
 global optionStaus #负责所有线程的停止
 optionStaus = 0
+
+# TODO：1.需要解决分辨率适配的问题   done
+#       2.解决协助申请的问题，自动拒绝    
+#       3.解决点击找不到挑战的逻辑      done
 
 class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成的类
     def __init__(self, Mainwindow):
@@ -145,10 +150,21 @@ class DoubleYuHun(Ui_start, QObject):
             windows2 = option.MyWindows(int(hwnd2))
 
             # 1080显示的值840 500
-            if windows1.ChangeWindows(10, 10, 1100, 665) == 1: #比例刚刚好这个比例，大概在1.6541左右
+            a = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
+            b = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
+            if a == 1920 and b == 1080:
+                windowsX = 840
+                windowsy = 508
+            elif a == 2560 and b == 1440:
+                windowsX = 1100
+                windowsy = 665
+            else:
+                windowsy = int((b-80)/2)
+                windowsX = int(windowsy*1.6541)
+            if windows1.ChangeWindows(10, 10, windowsX, windowsy) == 1: #比例刚刚好这个比例，大概在1.6541左右
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄1有误')
                 return
-            if windows2.ChangeWindows(10, 670, 1100, 665) == 1:
+            if windows2.ChangeWindows(10, 15+windowsy, windowsX, windowsy) == 1:
                 QMessageBox.information(self.Mainwindow, '提示', '输入句柄2有误')
                 return
             if num != "1" and num != "2":
@@ -186,15 +202,15 @@ class DoubleYuHun(Ui_start, QObject):
         optionStaus = 1
         option.turn_two(window1, window2)
         while (1):
-            option.snake_two(window1, window2, num, time) # 得分离开来将一次事件
+            x = option.snake_two(window1, window2, num, time) # 得分离开来将一次事件
             self.turnTimes += 1
             self.label10.setText(str(self.turnTimes) + "轮")
             if self.turnTimes >= 100:
                 self.signalCancel.signalCancel.emit("别刷辣别刷辣！我要累死了！")
             if pyautogui.locateOnScreen("./img/necessary/toomany.png",confidence = 0.6 ) is not None:
                 self.signalCancel.signalCancel.emit("御魂太多啦，停下清理御魂吧！")
-
-
+            if x == 0:
+                self.signalCancel.signalCancel.emit("组队出现异常！") #需要测试
 
 
 class SelectedPlace(Ui_start):

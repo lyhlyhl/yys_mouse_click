@@ -11,8 +11,6 @@ from PyQt5.QtWidgets import QApplication
 from datetime import datetime
 
 random.seed(datetime.now())
-a = win32api.GetSystemMetrics(win32con.SM_CXSCREEN)
-b = win32api.GetSystemMetrics(win32con.SM_CYSCREEN)
 
 
 # 基础操作
@@ -129,12 +127,18 @@ class MyWindows:  # 新建一个窗口类
 
     def WindowsClickSnackFight(self):
         pos = self.getPhotoPos("./img/necessary/tiaozhan_ok.png")
-        if pos is not None:
+        if pos is None:
+            for i in range(2):
+                time.sleep(3)
+                if pos is not None:
+                    x, y = self.posClickRandom(pos.left, pos.top, pos.width, pos.height)
+                    MouseClick(x, y)
+                    return 1
+            return 0
+        elif pos is not None:
             x, y = self.posClickRandom(pos.left, pos.top, pos.width, pos.height)
             MouseClick(x, y)
             return 1
-        else:
-            return 0
 
     def WindowsClickOther(self):
         self.random_x_other = random.uniform(0.7, 0.74)
@@ -168,9 +172,11 @@ def turnOneSelect(class1):
 def snake_two(class1, class2, num, times):
     WaitTime_wait(1)
     if num == "1":
-        class1.WindowsClickSnackFight()
+         x = class1.WindowsClickSnackFight()
     elif num == "2":
-        class2.WindowsClickSnackFight()
+        x = class2.WindowsClickSnackFight()
+    if x == 0:
+        return 0
     WaitTime_wait(times)
     turn_two(class1, class2)
     WaitTime_short(3)
