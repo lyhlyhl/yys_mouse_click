@@ -15,7 +15,7 @@ global optionStaus #负责所有线程的停止
 optionStaus = 0
 
 # TODO：1.需要解决分辨率适配的问题   done
-#       2.解决协助申请的问题，自动拒绝    
+#       2.解决协助申请的问题，自动拒绝
 #       3.解决点击找不到挑战的逻辑      done
 
 class Ui_start(qtui.Ui_MainWindow):  # 定义一个ui类继承Qt Designer生成的类
@@ -210,7 +210,11 @@ class DoubleYuHun(Ui_start, QObject):
             if pyautogui.locateOnScreen("./img/necessary/toomany.png",confidence = 0.6 ) is not None:
                 self.signalCancel.signalCancel.emit("御魂太多啦，停下清理御魂吧！")
             if x == 0:
-                self.signalCancel.signalCancel.emit("组队出现异常！") #需要测试
+                self.signalCancel.signalCancel.emit("组队出现异常！")
+
+
+
+
 
 
 class SelectedPlace(Ui_start):
@@ -317,11 +321,6 @@ class SelectedPlace(Ui_start):
     def action9_cancel(self):
         global optionStaus
         optionStaus = 0
-
-        #self.cancel_button.clicked.disconnect()
-        #self.confirm_button.clicked.connect(self.action9_confirm)
-        #self.confirm_button.clicked.disconnect(self.action9_cannotClick)
-
         option.stop_thread(self.clicktread)
         QMessageBox.information(self.Mainwindow, '提示', '成功停止！')
 
